@@ -8,7 +8,7 @@
 # obtain node/cluster credentials. Applies cluster-wide regardless of
 # namespace, and cannot be overridden by a namespace-scoped NetworkPolicy.
 # Requires Calico installed as (at minimum) the network policy engine
-# alongside the AWS VPC CNI - see docs/architecture.md "Choix de sécurité".
+# alongside the AWS VPC CNI - see docs/architecture.md "Security Choices".
 apiVersion: projectcalico.org/v3
 kind: GlobalNetworkPolicy
 metadata:

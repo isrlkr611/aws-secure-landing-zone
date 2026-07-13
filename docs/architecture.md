@@ -1,6 +1,6 @@
 # Architecture
 
-## Schéma d'ensemble
+## Overview diagram
 
 ```mermaid
 flowchart TB
@@ -9,21 +9,21 @@ flowchart TB
         GHA["GitHub Actions\n(tfsec / Checkov / Trivy / kubeconform)"]
     end
 
-    subgraph AWSACC["Compte AWS"]
+    subgraph AWSACC["AWS Account"]
         OIDC["IAM OIDC Provider\ntoken.actions.githubusercontent.com"]
-        DEPLOYROLE["IAM Role: gha-deploy-role\n(scoped repo+branch, no long-lived keys)"]
+        DEPLOYROLE["IAM Role: gha-deploy-role\n(scoped to repo+branch, no long-lived keys)"]
 
         subgraph VPC["VPC 10.0.0.0/16"]
             IGW["Internet Gateway"]
 
-            subgraph PUB["Subnets publics (3 AZ)"]
+            subgraph PUB["Public subnets (3 AZs)"]
                 NAT["NAT Gateways"]
                 ALB["ALB / Ingress"]
             end
 
-            subgraph PRIV["Subnets privés (3 AZ) - no route to IGW"]
-                subgraph EKS["EKS Cluster (endpoint privé)"]
-                    NODES["Node group\n(EBS chiffré, IMDSv2, pas de SSH)"]
+            subgraph PRIV["Private subnets (3 AZs) - no route to IGW"]
+                subgraph EKS["EKS Cluster (private endpoint)"]
+                    NODES["Node group\n(encrypted EBS, IMDSv2, no SSH)"]
 
                     subgraph NSAPP["namespace: app (PSS restricted)"]
                         FE["pods tier=frontend"]
@@ -42,21 +42,21 @@ flowchart TB
             end
         end
 
-        KMS["KMS\n(5 clés: eks_secrets, ebs, s3,\nsecrets_manager, cloudwatch_logs)"]
+        KMS["KMS\n(5 keys: eks_secrets, ebs, s3,\nsecrets_manager, cloudwatch_logs)"]
         SM["Secrets Manager\nslz-prod/*"]
-        CW["CloudWatch Logs\n(VPC Flow Logs, EKS audit logs)\nrétention 400j"]
-        BGADMIN["IAM Role: break-glass-admin\n(MFA obligatoire, session 1h)"]
+        CW["CloudWatch Logs\n(VPC Flow Logs, EKS audit logs)\n400-day retention"]
+        BGADMIN["IAM Role: break-glass-admin\n(MFA required, 1h session)"]
 
         IGW --> PUB
         NAT --> PRIV
         ALB -- "NetworkPolicy: allow-ingress-from-lb" --> FE
         FE -- "allow-frontend-to-backend" --> BE
         BE -- "allow-backend-to-db" --> DB
-        NODES -.->|"IMDS bloqué\n(Calico GlobalNetworkPolicy)"| CALICO
+        NODES -.->|"IMDS blocked\n(Calico GlobalNetworkPolicy)"| CALICO
         ESO -- "IRSA (OIDC)" --> SM
-        SM -. "chiffré par" .-> KMS
-        NODES -. "EBS chiffré par" .-> KMS
-        EKS -. "secrets etcd chiffrés par" .-> KMS
+        SM -. "encrypted with" .-> KMS
+        NODES -. "EBS encrypted with" .-> KMS
+        EKS -. "etcd secrets encrypted with" .-> KMS
         VPC -- "Flow Logs" --> CW
         EKS -- "control plane logs" --> CW
     end
@@ -64,54 +64,54 @@ flowchart TB
     REPO --> GHA
     GHA -- "OIDC token" --> OIDC
     OIDC --> DEPLOYROLE
-    DEPLOYROLE -- "terraform apply\n(scopé, sans clé statique)" --> VPC
-    DEPLOYROLE -.->|"deny: modifier son propre\nrole, supprimer les clés KMS"| DEPLOYROLE
+    DEPLOYROLE -- "terraform apply\n(scoped, no static key)" --> VPC
+    DEPLOYROLE -.->|"deny: modify its own\nrole, delete KMS keys"| DEPLOYROLE
 
-    OPERATOR["Opérateur humain + MFA"] -- "sts:AssumeRole\n(MFA < 1h)" --> BGADMIN
+    OPERATOR["Human operator + MFA"] -- "sts:AssumeRole\n(MFA < 1h)" --> BGADMIN
 ```
 
-## Choix de sécurité et justifications
+## Security choices and rationale
 
-### Réseau (VPC)
-- **Segmentation publique/privée** : seuls les NAT Gateways et load balancers vivent dans les subnets publics. Les nœuds EKS et les pods n'ont *aucune route* vers l'Internet Gateway - ce n'est pas un security group qui les protège, c'est l'absence physique de chemin réseau.
-- **Pas de bastion SSH** : l'accès aux nœuds se fait via AWS SSM Session Manager (authentifié IAM, journalisé), jamais via un port 22 exposé. Un NACL dédié bloque explicitement 22/3389 en entrée sur les subnets privés, en défense en profondeur au-dessus des security groups.
-- **VPC Flow Logs** conservés 400 jours, chiffrés KMS - nécessaires pour toute investigation post-incident (qui a parlé à qui, quand).
-- **NACL vs Security Groups** : les NACL sont utilisées pour un blocage catégorique (22/3389 refusés quel que soit le security group), les security groups pour le contrôle fin par service. Les deux couches ont des rôles différents et complémentaires - voir les commentaires `tfsec:ignore` dans le code pour le détail des règles NACL avec plage de ports large (retour de trafic avec état, obligatoire pour des NACL sans état).
+### Network (VPC)
+- **Public/private segmentation**: only NAT Gateways and load balancers live in public subnets. EKS nodes and pods have *no route at all* to the Internet Gateway - it's not a security group protecting them, it's the physical absence of a network path.
+- **No SSH bastion**: node access goes through AWS SSM Session Manager (IAM-authenticated, logged), never through an exposed port 22. A dedicated NACL explicitly blocks inbound 22/3389 on the private subnets, as defense in depth on top of security groups.
+- **VPC Flow Logs** retained for 400 days, KMS-encrypted - needed for any post-incident investigation (who talked to whom, and when).
+- **NACLs vs. security groups**: NACLs handle categorical blocking (22/3389 denied regardless of security group), security groups handle fine-grained per-service control. The two layers play different, complementary roles - see the `tfsec:ignore` comments in the code for the detail on wide-port-range NACL rules (stateful return traffic, mandatory for stateless NACLs).
 
 ### IAM
-- **Aucun `Action: "*"` ni `Resource: "*"` par confort** : chaque rôle (cluster EKS, nœuds, CI/CD, External Secrets) reçoit exactement les actions nécessaires. Là où AWS n'autorise pas de scoping par ARN (ex. `ec2:Describe*`), c'est documenté comme limitation native d'IAM, pas comme un raccourci.
-- **`iam:PassRole` scopé** : la policy CI/CD ne peut passer que les deux rôles EKS (cluster/nœud) à `eks.amazonaws.com`/`ec2.amazonaws.com` précisément - c'est le contrôle qui empêche un pipeline compromis d'escalader vers un rôle plus privilégié.
-- **OIDC fédéré GitHub Actions → AWS** : aucune clé d'accès AWS stockée en secret GitHub. Le rôle assumé est scopé à un repo et une branche précis (`repo:org/repo:ref:refs/heads/main`), donc une PR depuis un fork ne peut jamais l'assumer.
-- **MFA "obligatoire" simulé** : IAM ne peut pas forcer l'activation du MFA sur un utilisateur via une trust policy de rôle, mais peut refuser d'émettre les credentials tant que la session STS appelante n'a pas elle-même été établie avec MFA récent (`aws:MultiFactorAuthPresent` + `aws:MultiFactorAuthAge < 3600`). C'est l'équivalent applicable et auditable pour un accès par rôle, utilisé sur le rôle `break-glass-admin`.
-- **Déni explicite d'auto-escalade** : le rôle CI/CD ne peut ni modifier sa propre policy, ni supprimer les clés KMS - un pipeline compromis reste dans un rayon d'action borné.
+- **No `Action: "*"` or `Resource: "*"` for convenience**: every role (EKS cluster, nodes, CI/CD, External Secrets) gets exactly the actions it needs. Where AWS doesn't support ARN-level scoping (e.g. `ec2:Describe*`), that's documented as a native IAM limitation, not a shortcut.
+- **Scoped `iam:PassRole`**: the CI/CD policy can only pass the two EKS roles (cluster/node) to `eks.amazonaws.com`/`ec2.amazonaws.com` specifically - this is the control that prevents a compromised pipeline from escalating to a more privileged role.
+- **Federated OIDC from GitHub Actions to AWS**: no AWS access key stored as a GitHub secret. The assumed role is scoped to one exact repo and branch (`repo:org/repo:ref:refs/heads/main`), so a PR from a fork can never assume it.
+- **Simulated mandatory MFA**: IAM can't force MFA to be enabled on a user via a role's trust policy, but it can refuse to hand out credentials unless the calling STS session was itself established with recent MFA (`aws:MultiFactorAuthPresent` + `aws:MultiFactorAuthAge < 3600`). That's the enforceable, auditable equivalent for role-based access, used on the `break-glass-admin` role.
+- **Explicit deny on self-escalation**: the CI/CD role can neither modify its own policy nor delete the KMS keys - a compromised pipeline stays within a bounded blast radius.
 
-### Chiffrement
-- **5 clés KMS dédiées** (secrets EKS, EBS, S3, Secrets Manager, CloudWatch Logs) plutôt qu'une clé partagée - limite le rayon d'impact si la policy d'une clé est un jour élargie par erreur.
-- **Chiffrement en transit** : TLS pour l'API server EKS (natif), et readOnlyRootFilesystem + secrets jamais en clair pour les workloads.
-- **Secrets Kubernetes chiffrés dans etcd** via `encryption_config` sur le cluster EKS, en plus du chiffrement disque natif d'EKS.
+### Encryption
+- **5 dedicated KMS keys** (EKS secrets, EBS, S3, Secrets Manager, CloudWatch Logs) rather than one shared key - limits blast radius if one key's policy is ever loosened by mistake.
+- **Encryption in transit**: TLS for the EKS API server (native), plus `readOnlyRootFilesystem` and secrets that are never inlined in plaintext for workloads.
+- **Kubernetes secrets encrypted in etcd** via `encryption_config` on the EKS cluster, on top of EKS's native disk-level encryption.
 
 ### Kubernetes / EKS
-- **Endpoint API privé par défaut** (`cluster_endpoint_public_access = false`) : Terraform gère le cluster via l'API de contrôle AWS (`eks.<region>.amazonaws.com`), pas via l'API Kubernetes elle-même - donc `terraform plan/apply` fonctionne sans accès réseau au cluster. Les opérations `kubectl`/`helm` (installation de Calico, de l'External Secrets Operator, application des manifests) nécessitent en revanche une connectivité privée : runner GitHub Actions auto-hébergé dans le VPC, VPN, ou SSM port-forwarding.
-- **Pod Security Standards "restricted"** appliqué au niveau namespace (`app`, `external-secrets`) : `runAsNonRoot`, `allowPrivilegeEscalation: false`, `capabilities.drop: [ALL]`, `seccompProfile: RuntimeDefault`. Le namespace `calico-system` reste en `privileged` car le CNI a légitimement besoin de `hostNetwork`/`NET_ADMIN` - c'est la seule exception, documentée.
-- **RBAC namespace-scopé** : aucun `ClusterRole` distribué aux équipes applicatives. Un rôle compromis dans `app` ne peut rien lister ni modifier ailleurs dans le cluster.
-- **NetworkPolicies "deny by default"** : un `default-deny-all` bloque tout le trafic dans `app`, puis des règles ciblées ré-autorisent DNS, frontend→backend, backend→database, et l'entrée depuis le load balancer uniquement vers le frontend.
-- **Calico GlobalNetworkPolicy** pour bloquer `169.254.169.254` (IMDS) depuis tous les pods - la voie n°1 d'escalade SSRF→vol de credentials sur EKS, non exprimable avec l'API `NetworkPolicy` standard (qui ne cible que des pods/namespaces, pas un CIDR externe).
-- **Secrets jamais en clair** : l'External Secrets Operator synchronise depuis AWS Secrets Manager via IRSA (rôle IAM scopé au service account exact `external-secrets:external-secrets`), sans clé d'accès statique dans le cluster.
+- **Private API endpoint by default** (`cluster_endpoint_public_access = false`): Terraform manages the cluster through the AWS control-plane API (`eks.<region>.amazonaws.com`), not through the Kubernetes API itself - so `terraform plan/apply` works with no network access to the cluster. `kubectl`/`helm` operations (installing Calico, the External Secrets Operator, applying manifests), on the other hand, need private connectivity: a self-hosted GitHub Actions runner inside the VPC, a VPN, or SSM port-forwarding.
+- **"Restricted" Pod Security Standards** applied at the namespace level (`app`, `external-secrets`): `runAsNonRoot`, `allowPrivilegeEscalation: false`, `capabilities.drop: [ALL]`, `seccompProfile: RuntimeDefault`. The `calico-system` namespace stays `privileged` because the CNI legitimately needs `hostNetwork`/`NET_ADMIN` - that's the one documented exception.
+- **Namespace-scoped RBAC**: no `ClusterRole` handed out to application teams. A compromised role in `app` can't list or touch anything else in the cluster.
+- **"Deny by default" NetworkPolicies**: a `default-deny-all` blocks all traffic in `app`, then targeted rules re-allow DNS, frontend→backend, backend→database, and inbound from the load balancer to the frontend only.
+- **Calico GlobalNetworkPolicy** blocking `169.254.169.254` (IMDS) from every pod - the #1 SSRF-to-credential-theft path on EKS, and not expressible with the standard `NetworkPolicy` API (which only targets pods/namespaces, not an external CIDR).
+- **Secrets never in plaintext**: the External Secrets Operator syncs from AWS Secrets Manager via IRSA (an IAM role scoped to the exact service account `external-secrets:external-secrets`), with no static access key living in the cluster.
 
 ### CI/CD
-- **tfsec + Checkov bloquants** sur toute PR touchant `terraform/` - un `HIGH`/`CRITICAL` non justifié fait échouer le check requis, ce qui bloque la fusion via la protection de branche GitHub.
-- **Trivy** scanne les images de conteneurs (CVE) et les manifests Kubernetes (mauvaise configuration) avant qu'une image ne puisse être référencée par un déploiement.
-- **kubeconform** valide la syntaxe et le schéma des manifests Kubernetes.
+- **tfsec + Checkov are blocking** on any PR touching `terraform/` - an unjustified `HIGH`/`CRITICAL` finding fails the required check, which blocks the merge via GitHub branch protection.
+- **Trivy** scans container images (CVEs) and Kubernetes manifests (misconfiguration) before an image can ever be referenced by a deployment.
+- **kubeconform** validates the syntax and schema of Kubernetes manifests.
 
-## Résultats des scans avant/après durcissement
+## Scan results: before / after hardening
 
-Scans exécutés localement avec `tfsec v1.28.13` et `checkov v3.3.8` (mêmes outils que la CI). Détail complet dans [`docs/scan-results/`](scan-results/).
+Scans run locally with `tfsec v1.28.13` and `checkov v3.3.8` (the same tools used in CI). Full detail in [`docs/scan-results/`](scan-results/).
 
-| | Baseline non sécurisée (`examples/insecure-baseline/`) | Landing zone durcie (`terraform/`) |
+| | Insecure baseline (`examples/insecure-baseline/`) | Hardened landing zone (`terraform/`) |
 |---|---|---|
-| **tfsec** | 23 findings : **4 CRITICAL, 11 HIGH**, 5 MEDIUM, 3 LOW (5 passed) | **0 CRITICAL, 0 HIGH** (70 passed, 20 ignorés et justifiés en ligne) |
-| **Checkov** | 38 failed / 12 passed + 1 secret en clair détecté (`CKV_SECRET_6`) | **0 failed** / 194 passed / 7 skips justifiés en ligne |
+| **tfsec** | 23 findings: **4 CRITICAL, 11 HIGH**, 5 MEDIUM, 3 LOW (5 passed) | **0 CRITICAL, 0 HIGH** (70 passed, 20 ignored with inline justification) |
+| **Checkov** | 38 failed / 12 passed + 1 plaintext secret detected (`CKV_SECRET_6`) | **0 failed** / 194 passed / 7 skips with inline justification |
 
-La baseline reproduit des erreurs courantes (SSH/RDP ouverts à `0.0.0.0/0`, bucket S3 public, EBS non chiffré, policy IAM `Action:"*"`, mot de passe RDS en dur) précisément pour illustrer, scan à l'appui, ce que la configuration durcie de ce repo évite.
+The baseline reproduces common mistakes (SSH/RDP open to `0.0.0.0/0`, a public S3 bucket, an unencrypted EBS volume, an IAM policy with `Action:"*"`, a hardcoded RDS password) specifically to show, scan output in hand, exactly what the hardened configuration in this repo avoids.
 
-Chaque exception restante dans le code durci est un `tfsec:ignore` / `checkov:skip` **en ligne, avec justification technique** (visible directement dans `terraform/modules/*/main.tf`) plutôt qu'une exclusion globale masquée dans la configuration de l'outil - le but étant que la CI reste honnête : elle bloque tout ce qui n'a pas été explicitement examiné et justifié.
+Every remaining exception in the hardened code is an **inline** `tfsec:ignore` / `checkov:skip` **with a technical justification** (visible directly in `terraform/modules/*/main.tf`) rather than a global exclusion hidden in the tool's configuration - the point being that CI stays honest: it blocks everything that hasn't been explicitly reviewed and justified.

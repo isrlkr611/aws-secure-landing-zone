@@ -305,7 +305,7 @@ resource "aws_iam_role_policy" "github_actions_deploy" {
 # ---------------------------------------------------------------------------
 # Break-glass human admin role - requires an active MFA session to assume
 # (aws:MultiFactorAuthPresent), and the session is short-lived.
-# This is the "MFA obligatoire simulée" control: IAM cannot force a user to
+# This is the "simulated mandatory MFA" control: IAM cannot force a user to
 # have MFA enabled on their IAM user from within a role's trust policy, but
 # it CAN refuse to hand out this role's credentials unless the caller's
 # current STS session was itself established with MFA - which is the
@@ -342,7 +342,7 @@ resource "aws_iam_role_policy_attachment" "break_glass_admin" {
   # Justified because: (1) trust policy requires a fresh MFA-backed STS session
   # (see condition above), (2) 1h max session duration, (3) every assumption
   # is a distinct CloudTrail event that should page on-call per the incident
-  # response runbook. See docs/architecture.md "Choix de sécurité" for detail.
+  # response runbook. See docs/architecture.md "Security Choices" for detail.
   role       = aws_iam_role.break_glass_admin.name
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
