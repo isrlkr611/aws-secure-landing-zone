@@ -18,6 +18,10 @@ Real before/after hardening scan results (tfsec: 23 findings incl. 4 CRITICAL �
 
 A full technical deep dive — module-by-module design rationale, threat model, deployment runbook, and interview prep notes — is available as a standalone PDF, in English and in French: [docs/deep-dive/AWS-Secure-Landing-Zone-Deep-Dive-EN.pdf](docs/deep-dive/AWS-Secure-Landing-Zone-Deep-Dive-EN.pdf) · [docs/deep-dive/AWS-Secure-Landing-Zone-Deep-Dive-FR.pdf](docs/deep-dive/AWS-Secure-Landing-Zone-Deep-Dive-FR.pdf) (source Markdown: [DEEP_DIVE.en.md](docs/deep-dive/DEEP_DIVE.en.md) / [DEEP_DIVE.fr.md](docs/deep-dive/DEEP_DIVE.fr.md)).
 
+## What this infrastructure actually hosts
+
+[`platform/`](platform/) is a real workload built to run on this landing zone: an **Attack Surface Monitor** (FastAPI) that continuously tracks a domain's exposed subdomains, open ports, TLS certificate expiry, and leaked credentials - gated by mandatory DNS TXT domain-ownership verification before any scan can run (unauthorized scanning is a criminal offense under, among others, French Code pénal Art. 323-1; this platform is built so it structurally cannot do that). 45 tests, 0 live network calls in this dev environment (every subprocess/HTTP/DNS call is mocked), a hardened non-root container image (built and Trivy-scanned locally), and Kubernetes manifests that reuse this repo's own `ClusterSecretStore`/Pod Security Standards/NetworkPolicy patterns. See [platform/README.md](platform/README.md) for the full picture, including what's deliberately simplified for this MVP slice and the roadmap for the two further product modules (compliance mapping, purple-team simulation) it's designed to grow into.
+
 ## Repo structure
 
 ```
@@ -41,8 +45,14 @@ A full technical deep dive — module-by-module design rationale, threat model, 
 │   ├── terraform-plan.yml             # plan via OIDC (no static AWS key)
 │   └── image-scan-trivy.yml            # build + CVE image scan, K8s config scan
 ├── examples/insecure-baseline/           # NOT deployable - only used to generate the "before" scan
+├── platform/                               # Attack Surface Monitor - the workload this infra hosts (see platform/README.md)
+│   ├── app/                                  # FastAPI: routers, services (scan types), models
+│   ├── tests/                                 # 45 tests, fully offline/mocked
+│   ├── k8s/                                    # Deployment, CronJob, NetworkPolicy, ExternalSecret
+│   └── Dockerfile                                # non-root, nmap + subfinder, Trivy-scanned
 └── docs/
     ├── architecture.md                     # Mermaid diagram + security choices + scan results
+    ├── deep-dive/                            # ultra-detailed EN/FR technical reference (PDF + Markdown)
     └── scan-results/{before,after}/          # raw tfsec/checkov output
 ```
 

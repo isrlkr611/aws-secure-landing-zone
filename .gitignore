@@ -27,3 +27,14 @@ terraform.rc
 *.pem
 *.key
 kubeconfig*
+
+# Python (platform/)
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+*.db
+platform/.env
+!platform/.env.example

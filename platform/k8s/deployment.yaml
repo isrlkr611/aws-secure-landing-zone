@@ -1,0 +1,99 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: attack-surface-monitor-api
+  namespace: attack-surface-monitor
+  annotations:
+    # Same IRSA pattern as kubernetes/rbac/service-accounts.yaml in the
+    # landing zone - the API pod gets a narrowly-scoped IAM role for reading
+    # its own secrets from AWS Secrets Manager, nothing else. Replace with
+    # the real role ARN once deployed.
+    eks.amazonaws.com/role-arn: "arn:aws:iam::ACCOUNT_ID:role/NAME_PREFIX-attack-surface-monitor-irsa"
+automountServiceAccountToken: true
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: attack-surface-monitor-api
+  namespace: attack-surface-monitor
+  labels:
+    app: attack-surface-monitor
+    tier: api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: attack-surface-monitor
+      tier: api
+  template:
+    metadata:
+      labels:
+        app: attack-surface-monitor
+        tier: api
+    spec:
+      serviceAccountName: attack-surface-monitor-api
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: api
+          image: ghcr.io/example-org/attack-surface-monitor-api:latest # built from platform/Dockerfile, scanned by Trivy in CI first
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: attack-surface-monitor-secrets # populated by External Secrets, see external-secret.yaml
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: attack-surface-monitor-secrets
+                  key: DATABASE_URL
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: attack-surface-monitor-api
+  namespace: attack-surface-monitor
+spec:
+  selector:
+    app: attack-surface-monitor
+    tier: api
+  ports:
+    - port: 80
+      targetPort: 8000
+  type: ClusterIP

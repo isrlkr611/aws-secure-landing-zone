@@ -1,0 +1,64 @@
+# Periodic re-scan of every verified domain - the production equivalent of
+# app/tasks/scheduler.py's in-process BackgroundScheduler (used for local
+# dev only). Runs as a one-shot Job on a schedule instead of a long-lived
+# thread inside the API process, so a stuck scan can't degrade API
+# availability and failures are visible as a distinct Job/Pod, not buried
+# in the API's own logs.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: attack-surface-monitor-scanner
+  namespace: attack-surface-monitor
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::ACCOUNT_ID:role/NAME_PREFIX-attack-surface-monitor-irsa"
+automountServiceAccountToken: true
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: attack-surface-monitor-rescan
+  namespace: attack-surface-monitor
+spec:
+  schedule: "0 3 * * *" # daily at 03:00 - see app/config.py SCAN_INTERVAL_HOURS for the equivalent local-dev setting
+  concurrencyPolicy: Forbid # never run two full sweeps over the same domains at once
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: 3600
+      template:
+        spec:
+          serviceAccountName: attack-surface-monitor-scanner
+          restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            fsGroup: 10001
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: scanner
+              image: ghcr.io/example-org/attack-surface-monitor-api:latest # same image as the API - different entrypoint
+              command: ["python", "-m", "app.tasks.scheduler"]
+              envFrom:
+                - secretRef:
+                    name: attack-surface-monitor-secrets
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"] # -sT (TCP connect scan, see app/services/port_scan.py) needs no added capabilities
+              resources:
+                requests:
+                  cpu: 200m
+                  memory: 256Mi
+                limits:
+                  cpu: 1000m
+                  memory: 512Mi
+              volumeMounts:
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: tmp
+              emptyDir: {}

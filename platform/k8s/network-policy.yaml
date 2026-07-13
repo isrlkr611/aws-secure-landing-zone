@@ -1,0 +1,90 @@
+# Same deny-by-default pattern as kubernetes/network-policies/ at the repo
+# root, with one deliberate difference explained below: this namespace's
+# entire purpose is to make outbound network connections to third-party
+# targets (the domains customers ask it to monitor), so egress cannot be
+# scoped down to a fixed allow-list the way kubernetes/network-policies/
+# does for the landing zone's own internal app tiers.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: attack-surface-monitor
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns-egress
+  namespace: attack-surface-monitor
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+---
+# Deliberately broad egress, scoped to this namespace only: the verification
+# service resolves DNS TXT records for arbitrary customer-supplied domains
+# (via CoreDNS, covered by allow-dns-egress above, which then recurses
+# outward), subdomain_scan.py calls crt.sh over HTTPS, leak_check.py calls
+# the HaveIBeenPwned API over HTTPS, and - the one that can't be scoped to
+# port 443 at all - port_scan.py's entire job is opening TCP connections to
+# whatever ports a verified target domain has configured
+# (settings.scan_common_ports, currently 21-27017). There is no fixed
+# allow-list that lets a port scanner scan ports. What IS enforced, and
+# enforced in application code rather than at the network layer, is WHICH
+# domains this can ever point at: see app/services/verification.py - every
+# scan call requires domain.is_verified first.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-scan-egress
+  namespace: attack-surface-monitor
+spec:
+  podSelector:
+    matchLabels:
+      app: attack-surface-monitor
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 169.254.169.254/32 # IMDS - same rationale as kubernetes/network-policies/calico-deny-imds.yaml
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-from-lb
+  namespace: attack-surface-monitor
+spec:
+  podSelector:
+    matchLabels:
+      app: attack-surface-monitor
+      tier: api
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 8000
