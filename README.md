@@ -16,6 +16,8 @@ Full detail on security choices and the architecture diagram: **[docs/architectu
 
 Real before/after hardening scan results (tfsec: 23 findings incl. 4 CRITICAL → 0 CRITICAL/HIGH; checkov: 38 failed → 0 failed): **[docs/architecture.md#scan-results-before--after-hardening](docs/architecture.md#scan-results-before--after-hardening)**, raw output in [docs/scan-results/](docs/scan-results/).
 
+A full technical deep dive — module-by-module design rationale, threat model, deployment runbook, and interview prep notes — is available as a standalone PDF, in English and in French: [docs/deep-dive/AWS-Secure-Landing-Zone-Deep-Dive-EN.pdf](docs/deep-dive/AWS-Secure-Landing-Zone-Deep-Dive-EN.pdf) · [docs/deep-dive/AWS-Secure-Landing-Zone-Deep-Dive-FR.pdf](docs/deep-dive/AWS-Secure-Landing-Zone-Deep-Dive-FR.pdf) (source Markdown: [DEEP_DIVE.en.md](docs/deep-dive/DEEP_DIVE.en.md) / [DEEP_DIVE.fr.md](docs/deep-dive/DEEP_DIVE.fr.md)).
+
 ## Repo structure
 
 ```
