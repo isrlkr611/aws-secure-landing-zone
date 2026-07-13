@@ -1,0 +1,30 @@
+# Calico-specific GlobalNetworkPolicy - goes beyond what the standard
+# Kubernetes NetworkPolicy API can express (which only selects Pods/
+# Namespaces, not arbitrary external CIDRs). This blocks every pod in the
+# cluster from reaching the EC2 instance metadata service
+# (169.254.169.254), which is the #1 SSRF-to-credential-theft path in EKS:
+# without this, a compromised pod with node-level network access could
+# query IMDS and, if IMDSv1 or an over-privileged node role were in play,
+# obtain node/cluster credentials. Applies cluster-wide regardless of
+# namespace, and cannot be overridden by a namespace-scoped NetworkPolicy.
+# Requires Calico installed as (at minimum) the network policy engine
+# alongside the AWS VPC CNI - see docs/architecture.md "Choix de sécurité".
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: deny-imds-access
+spec:
+  order: 0
+  selector: all()
+  types:
+    - Egress
+  egress:
+    - action: Deny
+      protocol: TCP
+      destination:
+        nets:
+          - 169.254.169.254/32
+    - action: Allow
+      destination:
+        notNets:
+          - 169.254.169.254/32

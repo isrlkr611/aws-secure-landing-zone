@@ -1,0 +1,40 @@
+# Pod Security Admission labels enforce the "restricted" profile at the
+# namespace level - the strictest built-in Kubernetes standard (no root,
+# no privilege escalation, no hostPath/hostNetwork/hostPID, seccomp
+# RuntimeDefault required, capabilities dropped, etc). `enforce` blocks
+# non-compliant pods outright; `audit`/`warn` are set to the same level so
+# violations are also visible in the API server audit log and via `kubectl`
+# warnings during CI, not just rejected silently.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: app
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: external-secrets
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+---
+# Namespace for Calico's own control plane components. Left at the
+# "privileged" PSS level because the CNI and its node agents legitimately
+# need hostNetwork/hostPath/NET_ADMIN - restricting it would break the CNI
+# that enforces every other namespace's isolation. This is the one
+# documented exception; see docs/architecture.md.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: calico-system
+  labels:
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/audit: privileged
+    pod-security.kubernetes.io/warn: privileged

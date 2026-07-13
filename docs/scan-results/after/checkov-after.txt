@@ -1,0 +1,960 @@
+
+       _               _
+   ___| |__   ___  ___| | _______   __
+  / __| '_ \ / _ \/ __| |/ / _ \ \ / /
+ | (__| | | |  __/ (__|   < (_) \ V /
+  \___|_| |_|\___|\___|_|\_\___/ \_/
+
+By Prisma Cloud | version: 3.3.8 
+
+terraform scan results:
+
+Passed checks: 194, Failed checks: 0, Skipped checks: 7
+
+Check: CKV_AWS_107: "Ensure IAM policies does not allow credentials exposure"
+	PASSED for resource: aws_iam_policy_document.external_secrets_trust
+	File: /environments/prod/main.tf:68-90
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/ensure-iam-policies-do-not-allow-credentials-exposure
+Check: CKV_AWS_1: "Ensure IAM policies that allow full "*-*" administrative privileges are not created"
+	PASSED for resource: aws_iam_policy_document.external_secrets_trust
+	File: /environments/prod/main.tf:68-90
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/iam-23
+Check: CKV_AWS_111: "Ensure IAM policies does not allow write access without constraints"
+	PASSED for resource: aws_iam_policy_document.external_secrets_trust
+	File: /environments/prod/main.tf:68-90
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/ensure-iam-policies-do-not-allow-write-access-without-constraint
+Check: CKV_AWS_49: "Ensure no IAM policies documents allow "*" as a statement's actions"
+	PASSED for resource: aws_iam_policy_document.external_secrets_trust
+	File: /environments/prod/main.tf:68-90
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-iam-43
+Check: CKV_AWS_283: "Ensure no IAM policies documents allow ALL or any AWS principal permissions to the resource"
+	PASSED for resource: aws_iam_policy_document.external_secrets_trust
+	File: /environments/prod/main.tf:68-90
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-283
+Check: CKV_AWS_356: "Ensure no IAM policies documents allow "*" as a statement's resource for restrictable actions"
+	PASSED for resource: aws_iam_policy_document.external_secrets_trust
+	File: /environments/prod/main.tf:68-90
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-356
+Check: CKV_AWS_358: "Ensure AWS GitHub Actions OIDC authorization policies only allow safe claims and claim order"
+	PASSED for resource: aws_iam_policy_document.external_secrets_trust
+	File: /environments/prod/main.tf:68-90
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/iam-358
+Check: CKV_AWS_109: "Ensure IAM policies does not allow permissions management / resource exposure without constraints"
+	PASSED for resource: aws_iam_policy_document.external_secrets_trust
+	File: /environments/prod/main.tf:68-90
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/ensure-iam-policies-do-not-allow-permissions-management-resource-exposure-without-constraint
+Check: CKV_AWS_108: "Ensure IAM policies does not allow data exfiltration"
+	PASSED for resource: aws_iam_policy_document.external_secrets_trust
+	File: /environments/prod/main.tf:68-90
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/ensure-iam-policies-do-not-allow-data-exfiltration
+Check: CKV_AWS_110: "Ensure IAM policies does not allow privilege escalation"
+	PASSED for resource: aws_iam_policy_document.external_secrets_trust
+	File: /environments/prod/main.tf:68-90
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/ensure-iam-policies-does-not-allow-privilege-escalation
+Check: CKV_AWS_60: "Ensure IAM role allows only specific services or principals to assume it"
+	PASSED for resource: aws_iam_role.external_secrets_irsa
+	File: /environments/prod/main.tf:92-96
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-iam-44
+Check: CKV_AWS_393: "Ensure AWS GitHub Actions OIDC authorization policies only allow safe claims and claim order on IAM role"
+	PASSED for resource: aws_iam_role.external_secrets_irsa
+	File: /environments/prod/main.tf:92-96
+Check: CKV_AWS_61: "Ensure AWS IAM policy does not allow assume role permission across all services"
+	PASSED for resource: aws_iam_role.external_secrets_irsa
+	File: /environments/prod/main.tf:92-96
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-iam-45
+Check: CKV_AWS_274: "Disallow IAM roles, users, and groups from using the AWS AdministratorAccess policy"
+	PASSED for resource: aws_iam_role.external_secrets_irsa
+	File: /environments/prod/main.tf:92-96
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-274
+Check: CKV_AWS_274: "Disallow IAM roles, users, and groups from using the AWS AdministratorAccess policy"
+	PASSED for resource: aws_iam_role_policy_attachment.external_secrets_irsa
+	File: /environments/prod/main.tf:98-101
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-274
+Check: CKV_AWS_41: "Ensure no hard coded AWS access key and secret key exists in provider"
+	PASSED for resource: aws.default
+	File: /environments/prod/providers.tf:1-7
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/secrets-policies/bc-aws-secrets-5
+Check: CKV_AWS_66: "Ensure that CloudWatch Log Group specifies retention days"
+	PASSED for resource: module.eks.aws_cloudwatch_log_group.eks_control_plane
+	File: /modules/eks/main.tf:8-13
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-logging-policies/logging-13
+Check: CKV_AWS_158: "Ensure that CloudWatch Log Group is encrypted by KMS"
+	PASSED for resource: module.eks.aws_cloudwatch_log_group.eks_control_plane
+	File: /modules/eks/main.tf:8-13
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/ensure-that-cloudwatch-log-group-is-encrypted-by-kms
+Check: CKV_AWS_338: "Ensure CloudWatch log groups retains logs for at least 1 year"
+	PASSED for resource: module.eks.aws_cloudwatch_log_group.eks_control_plane
+	File: /modules/eks/main.tf:8-13
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-logging-policies/bc-aws-338
+Check: CKV_AWS_23: "Ensure every security group and rule has a description"
+	PASSED for resource: module.eks.aws_security_group.cluster
+	File: /modules/eks/main.tf:19-29
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-31
+Check: CKV_AWS_382: "Ensure no security groups allow egress from 0.0.0.0:0 to port -1"
+	PASSED for resource: module.eks.aws_security_group.cluster
+	File: /modules/eks/main.tf:19-29
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/bc-aws-382
+Check: CKV_AWS_24: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 22"
+	PASSED for resource: module.eks.aws_security_group.cluster
+	File: /modules/eks/main.tf:19-29
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-1-port-security
+Check: CKV_AWS_25: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 3389"
+	PASSED for resource: module.eks.aws_security_group.cluster
+	File: /modules/eks/main.tf:19-29
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-2
+Check: CKV_AWS_260: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 80"
+	PASSED for resource: module.eks.aws_security_group.cluster
+	File: /modules/eks/main.tf:19-29
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-security-groups-do-not-allow-ingress-from-00000-to-port-80
+Check: CKV_AWS_277: "Ensure no security groups allow ingress from 0.0.0.0:0 to port -1"
+	PASSED for resource: module.eks.aws_security_group.cluster
+	File: /modules/eks/main.tf:19-29
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-security-group-does-not-allow-all-traffic-on-all-ports
+Check: CKV_AWS_23: "Ensure every security group and rule has a description"
+	PASSED for resource: module.eks.aws_security_group_rule.cluster_egress_all
+	File: /modules/eks/main.tf:39-48
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-31
+Check: CKV_AWS_23: "Ensure every security group and rule has a description"
+	PASSED for resource: module.eks.aws_security_group.nodes
+	File: /modules/eks/main.tf:50-63
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-31
+Check: CKV_AWS_382: "Ensure no security groups allow egress from 0.0.0.0:0 to port -1"
+	PASSED for resource: module.eks.aws_security_group.nodes
+	File: /modules/eks/main.tf:50-63
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/bc-aws-382
+Check: CKV_AWS_24: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 22"
+	PASSED for resource: module.eks.aws_security_group.nodes
+	File: /modules/eks/main.tf:50-63
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-1-port-security
+Check: CKV_AWS_25: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 3389"
+	PASSED for resource: module.eks.aws_security_group.nodes
+	File: /modules/eks/main.tf:50-63
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-2
+Check: CKV_AWS_260: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 80"
+	PASSED for resource: module.eks.aws_security_group.nodes
+	File: /modules/eks/main.tf:50-63
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-security-groups-do-not-allow-ingress-from-00000-to-port-80
+Check: CKV_AWS_277: "Ensure no security groups allow ingress from 0.0.0.0:0 to port -1"
+	PASSED for resource: module.eks.aws_security_group.nodes
+	File: /modules/eks/main.tf:50-63
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-security-group-does-not-allow-all-traffic-on-all-ports
+Check: CKV_AWS_23: "Ensure every security group and rule has a description"
+	PASSED for resource: module.eks.aws_security_group_rule.nodes_ingress_self
+	File: /modules/eks/main.tf:65-73
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-31
+Check: CKV_AWS_24: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 22"
+	PASSED for resource: module.eks.aws_security_group_rule.nodes_ingress_self
+	File: /modules/eks/main.tf:65-73
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-1-port-security
+Check: CKV_AWS_25: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 3389"
+	PASSED for resource: module.eks.aws_security_group_rule.nodes_ingress_self
+	File: /modules/eks/main.tf:65-73
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-2
+Check: CKV_AWS_260: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 80"
+	PASSED for resource: module.eks.aws_security_group_rule.nodes_ingress_self
+	File: /modules/eks/main.tf:65-73
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-security-groups-do-not-allow-ingress-from-00000-to-port-80
+Check: CKV_AWS_277: "Ensure no security groups allow ingress from 0.0.0.0:0 to port -1"
+	PASSED for resource: module.eks.aws_security_group_rule.nodes_ingress_self
+	File: /modules/eks/main.tf:65-73
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-security-group-does-not-allow-all-traffic-on-all-ports
+Check: CKV_AWS_23: "Ensure every security group and rule has a description"
+	PASSED for resource: module.eks.aws_security_group_rule.nodes_ingress_cluster
+	File: /modules/eks/main.tf:75-83
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-31
+Check: CKV_AWS_24: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 22"
+	PASSED for resource: module.eks.aws_security_group_rule.nodes_ingress_cluster
+	File: /modules/eks/main.tf:75-83
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-1-port-security
+Check: CKV_AWS_25: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 3389"
+	PASSED for resource: module.eks.aws_security_group_rule.nodes_ingress_cluster
+	File: /modules/eks/main.tf:75-83
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-2
+Check: CKV_AWS_260: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 80"
+	PASSED for resource: module.eks.aws_security_group_rule.nodes_ingress_cluster
+	File: /modules/eks/main.tf:75-83
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-security-groups-do-not-allow-ingress-from-00000-to-port-80
+Check: CKV_AWS_277: "Ensure no security groups allow ingress from 0.0.0.0:0 to port -1"
+	PASSED for resource: module.eks.aws_security_group_rule.nodes_ingress_cluster
+	File: /modules/eks/main.tf:75-83
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-security-group-does-not-allow-all-traffic-on-all-ports
+Check: CKV_AWS_23: "Ensure every security group and rule has a description"
+	PASSED for resource: module.eks.aws_security_group_rule.cluster_ingress_nodes_https
+	File: /modules/eks/main.tf:85-93
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-31
+Check: CKV_AWS_24: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 22"
+	PASSED for resource: module.eks.aws_security_group_rule.cluster_ingress_nodes_https
+	File: /modules/eks/main.tf:85-93
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-1-port-security
+Check: CKV_AWS_25: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 3389"
+	PASSED for resource: module.eks.aws_security_group_rule.cluster_ingress_nodes_https
+	File: /modules/eks/main.tf:85-93
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-2
+Check: CKV_AWS_260: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 80"
+	PASSED for resource: module.eks.aws_security_group_rule.cluster_ingress_nodes_https
+	File: /modules/eks/main.tf:85-93
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-security-groups-do-not-allow-ingress-from-00000-to-port-80
+Check: CKV_AWS_277: "Ensure no security groups allow ingress from 0.0.0.0:0 to port -1"
+	PASSED for resource: module.eks.aws_security_group_rule.cluster_ingress_nodes_https
+	File: /modules/eks/main.tf:85-93
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-security-group-does-not-allow-all-traffic-on-all-ports
+Check: CKV_AWS_23: "Ensure every security group and rule has a description"
+	PASSED for resource: module.eks.aws_security_group_rule.nodes_egress_all
+	File: /modules/eks/main.tf:100-109
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-31
+Check: CKV_AWS_58: "Ensure EKS Cluster has Secrets Encryption Enabled"
+	PASSED for resource: module.eks.aws_eks_cluster.this
+	File: /modules/eks/main.tf:118-147
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-kubernetes-policies/bc-aws-kubernetes-3
+Check: CKV_AWS_39: "Ensure Amazon EKS public endpoint disabled"
+	PASSED for resource: module.eks.aws_eks_cluster.this
+	File: /modules/eks/main.tf:118-147
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-kubernetes-policies/bc-aws-kubernetes-2
+Check: CKV_AWS_38: "Ensure Amazon EKS public endpoint not accessible to 0.0.0.0/0"
+	PASSED for resource: module.eks.aws_eks_cluster.this
+	File: /modules/eks/main.tf:118-147
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-kubernetes-policies/bc-aws-kubernetes-1
+Check: CKV_AWS_37: "Ensure Amazon EKS control plane logging is enabled for all log types"
+	PASSED for resource: module.eks.aws_eks_cluster.this
+	File: /modules/eks/main.tf:118-147
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-kubernetes-policies/bc-aws-kubernetes-4
+Check: CKV_AWS_339: "Ensure EKS clusters run on a supported Kubernetes version"
+	PASSED for resource: module.eks.aws_eks_cluster.this
+	File: /modules/eks/main.tf:118-147
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-kubernetes-policies/bc-aws-339
+Check: CKV_AWS_46: "Ensure no hard-coded secrets exist in EC2 user data"
+	PASSED for resource: module.eks.aws_launch_template.nodes
+	File: /modules/eks/main.tf:169-206
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/secrets-policies/bc-aws-secrets-1
+Check: CKV_AWS_79: "Ensure Instance Metadata Service Version 1 is not enabled"
+	PASSED for resource: module.eks.aws_launch_template.nodes
+	File: /modules/eks/main.tf:169-206
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/bc-aws-general-31
+Check: CKV_AWS_341: "Ensure Launch template should not have a metadata response hop limit greater than 1"
+	PASSED for resource: module.eks.aws_launch_template.nodes
+	File: /modules/eks/main.tf:169-206
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/bc-aws-341
+Check: CKV_AWS_88: "EC2 instance should not have public IP."
+	PASSED for resource: module.eks.aws_launch_template.nodes
+	File: /modules/eks/main.tf:169-206
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/public-policies/public-12
+Check: CKV_AWS_100: "Ensure AWS EKS node group does not have implicit SSH access from 0.0.0.0/0"
+	PASSED for resource: module.eks.aws_eks_node_group.default
+	File: /modules/eks/main.tf:208-237
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-kubernetes-policies/bc-aws-kubernetes-5
+Check: CKV_AWS_60: "Ensure IAM role allows only specific services or principals to assume it"
+	PASSED for resource: module.iam.aws_iam_role.eks_cluster
+	File: /modules/iam/main.tf:4-17
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-iam-44
+Check: CKV_AWS_393: "Ensure AWS GitHub Actions OIDC authorization policies only allow safe claims and claim order on IAM role"
+	PASSED for resource: module.iam.aws_iam_role.eks_cluster
+	File: /modules/iam/main.tf:4-17
+	Calling File: /environments/prod/main.tf:33-44
+Check: CKV_AWS_61: "Ensure AWS IAM policy does not allow assume role permission across all services"
+	PASSED for resource: module.iam.aws_iam_role.eks_cluster
+	File: /modules/iam/main.tf:4-17
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-iam-45
+Check: CKV_AWS_274: "Disallow IAM roles, users, and groups from using the AWS AdministratorAccess policy"
+	PASSED for resource: module.iam.aws_iam_role.eks_cluster
+	File: /modules/iam/main.tf:4-17
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-274
+Check: CKV_AWS_274: "Disallow IAM roles, users, and groups from using the AWS AdministratorAccess policy"
+	PASSED for resource: module.iam.aws_iam_role_policy_attachment.eks_cluster_policy
+	File: /modules/iam/main.tf:19-22
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-274
+Check: CKV_AWS_60: "Ensure IAM role allows only specific services or principals to assume it"
+	PASSED for resource: module.iam.aws_iam_role.eks_node
+	File: /modules/iam/main.tf:28-41
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-iam-44
+Check: CKV_AWS_393: "Ensure AWS GitHub Actions OIDC authorization policies only allow safe claims and claim order on IAM role"
+	PASSED for resource: module.iam.aws_iam_role.eks_node
+	File: /modules/iam/main.tf:28-41
+	Calling File: /environments/prod/main.tf:33-44
+Check: CKV_AWS_61: "Ensure AWS IAM policy does not allow assume role permission across all services"
+	PASSED for resource: module.iam.aws_iam_role.eks_node
+	File: /modules/iam/main.tf:28-41
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-iam-45
+Check: CKV_AWS_274: "Disallow IAM roles, users, and groups from using the AWS AdministratorAccess policy"
+	PASSED for resource: module.iam.aws_iam_role.eks_node
+	File: /modules/iam/main.tf:28-41
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-274
+Check: CKV_AWS_274: "Disallow IAM roles, users, and groups from using the AWS AdministratorAccess policy"
+	PASSED for resource: module.iam.aws_iam_role_policy_attachment.eks_node_policies["arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"]
+	File: /modules/iam/main.tf:43-51
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-274
+Check: CKV_AWS_287: "Ensure IAM policies does not allow credentials exposure"
+	PASSED for resource: module.iam.aws_iam_policy.external_secrets
+	File: /modules/iam/main.tf:60-77
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-287
+Check: CKV_AWS_290: "Ensure IAM policies does not allow write access without constraints"
+	PASSED for resource: module.iam.aws_iam_policy.external_secrets
+	File: /modules/iam/main.tf:60-77
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-290
+Check: CKV_AWS_63: "Ensure no IAM policies documents allow "*" as a statement's actions"
+	PASSED for resource: module.iam.aws_iam_policy.external_secrets
+	File: /modules/iam/main.tf:60-77
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/iam-48
+Check: CKV_AWS_62: "Ensure IAM policies that allow full "*-*" administrative privileges are not created"
+	PASSED for resource: module.iam.aws_iam_policy.external_secrets
+	File: /modules/iam/main.tf:60-77
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-iam-45
+Check: CKV_AWS_289: "Ensure IAM policies does not allow permissions management / resource exposure without constraints"
+	PASSED for resource: module.iam.aws_iam_policy.external_secrets
+	File: /modules/iam/main.tf:60-77
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-289
+Check: CKV_AWS_288: "Ensure IAM policies does not allow data exfiltration"
+	PASSED for resource: module.iam.aws_iam_policy.external_secrets
+	File: /modules/iam/main.tf:60-77
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-288
+Check: CKV_AWS_286: "Ensure IAM policies does not allow privilege escalation"
+	PASSED for resource: module.iam.aws_iam_policy.external_secrets
+	File: /modules/iam/main.tf:60-77
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-286
+Check: CKV_AWS_355: "Ensure no IAM policies documents allow "*" as a statement's resource for restrictable actions"
+	PASSED for resource: module.iam.aws_iam_policy.external_secrets
+	File: /modules/iam/main.tf:60-77
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-355
+Check: CKV_AWS_60: "Ensure IAM role allows only specific services or principals to assume it"
+	PASSED for resource: module.iam.aws_iam_role.github_actions_deploy
+	File: /modules/iam/main.tf:93-115
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-iam-44
+Check: CKV_AWS_393: "Ensure AWS GitHub Actions OIDC authorization policies only allow safe claims and claim order on IAM role"
+	PASSED for resource: module.iam.aws_iam_role.github_actions_deploy
+	File: /modules/iam/main.tf:93-115
+	Calling File: /environments/prod/main.tf:33-44
+Check: CKV_AWS_61: "Ensure AWS IAM policy does not allow assume role permission across all services"
+	PASSED for resource: module.iam.aws_iam_role.github_actions_deploy
+	File: /modules/iam/main.tf:93-115
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-iam-45
+Check: CKV_AWS_274: "Disallow IAM roles, users, and groups from using the AWS AdministratorAccess policy"
+	PASSED for resource: module.iam.aws_iam_role.github_actions_deploy
+	File: /modules/iam/main.tf:93-115
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-274
+Check: CKV_AWS_287: "Ensure IAM policies does not allow credentials exposure"
+	PASSED for resource: module.iam.aws_iam_role_policy.github_actions_deploy
+	File: /modules/iam/main.tf:135-303
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-287
+Check: CKV_AWS_290: "Ensure IAM policies does not allow write access without constraints"
+	PASSED for resource: module.iam.aws_iam_role_policy.github_actions_deploy
+	File: /modules/iam/main.tf:135-303
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-290
+Check: CKV_AWS_63: "Ensure no IAM policies documents allow "*" as a statement's actions"
+	PASSED for resource: module.iam.aws_iam_role_policy.github_actions_deploy
+	File: /modules/iam/main.tf:135-303
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/iam-48
+Check: CKV_AWS_62: "Ensure IAM policies that allow full "*-*" administrative privileges are not created"
+	PASSED for resource: module.iam.aws_iam_role_policy.github_actions_deploy
+	File: /modules/iam/main.tf:135-303
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-iam-45
+Check: CKV_AWS_289: "Ensure IAM policies does not allow permissions management / resource exposure without constraints"
+	PASSED for resource: module.iam.aws_iam_role_policy.github_actions_deploy
+	File: /modules/iam/main.tf:135-303
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-289
+Check: CKV_AWS_288: "Ensure IAM policies does not allow data exfiltration"
+	PASSED for resource: module.iam.aws_iam_role_policy.github_actions_deploy
+	File: /modules/iam/main.tf:135-303
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-288
+Check: CKV_AWS_286: "Ensure IAM policies does not allow privilege escalation"
+	PASSED for resource: module.iam.aws_iam_role_policy.github_actions_deploy
+	File: /modules/iam/main.tf:135-303
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-286
+Check: CKV_AWS_60: "Ensure IAM role allows only specific services or principals to assume it"
+	PASSED for resource: module.iam.aws_iam_role.break_glass_admin
+	File: /modules/iam/main.tf:314-338
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-iam-44
+Check: CKV_AWS_393: "Ensure AWS GitHub Actions OIDC authorization policies only allow safe claims and claim order on IAM role"
+	PASSED for resource: module.iam.aws_iam_role.break_glass_admin
+	File: /modules/iam/main.tf:314-338
+	Calling File: /environments/prod/main.tf:33-44
+Check: CKV_AWS_61: "Ensure AWS IAM policy does not allow assume role permission across all services"
+	PASSED for resource: module.iam.aws_iam_role.break_glass_admin
+	File: /modules/iam/main.tf:314-338
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-iam-45
+Check: CKV_AWS_274: "Disallow IAM roles, users, and groups from using the AWS AdministratorAccess policy"
+	PASSED for resource: module.iam.aws_iam_role.break_glass_admin
+	File: /modules/iam/main.tf:314-338
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-274
+Check: CKV_AWS_274: "Disallow IAM roles, users, and groups from using the AWS AdministratorAccess policy"
+	PASSED for resource: module.iam.aws_iam_role_policy_attachment.eks_node_policies["arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"]
+	File: /modules/iam/main.tf:43-51
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-274
+Check: CKV_AWS_274: "Disallow IAM roles, users, and groups from using the AWS AdministratorAccess policy"
+	PASSED for resource: module.iam.aws_iam_role_policy_attachment.eks_node_policies["arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"]
+	File: /modules/iam/main.tf:43-51
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-274
+Check: CKV_AWS_227: "Ensure KMS key is enabled"
+	PASSED for resource: module.kms.aws_kms_key.this["cloudwatch_logs"]
+	File: /modules/kms/main.tf:44-56
+	Calling File: /environments/prod/main.tf:9-19
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/ensure-aws-key-management-service-kms-key-is-enabled
+Check: CKV_AWS_33: "Ensure KMS key policy does not contain wildcard (*) principal"
+	PASSED for resource: module.kms.aws_kms_key.this["cloudwatch_logs"]
+	File: /modules/kms/main.tf:44-56
+	Calling File: /environments/prod/main.tf:9-19
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/ensure-kms-key-policy-does-not-contain-wildcard-principal
+Check: CKV_AWS_7: "Ensure rotation for customer created CMKs is enabled"
+	PASSED for resource: module.kms.aws_kms_key.this["cloudwatch_logs"]
+	File: /modules/kms/main.tf:44-56
+	Calling File: /environments/prod/main.tf:9-19
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-logging-policies/logging-8
+Check: CKV_AWS_227: "Ensure KMS key is enabled"
+	PASSED for resource: module.kms.aws_kms_key.this["ebs"]
+	File: /modules/kms/main.tf:44-56
+	Calling File: /environments/prod/main.tf:9-19
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/ensure-aws-key-management-service-kms-key-is-enabled
+Check: CKV_AWS_33: "Ensure KMS key policy does not contain wildcard (*) principal"
+	PASSED for resource: module.kms.aws_kms_key.this["ebs"]
+	File: /modules/kms/main.tf:44-56
+	Calling File: /environments/prod/main.tf:9-19
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/ensure-kms-key-policy-does-not-contain-wildcard-principal
+Check: CKV_AWS_7: "Ensure rotation for customer created CMKs is enabled"
+	PASSED for resource: module.kms.aws_kms_key.this["ebs"]
+	File: /modules/kms/main.tf:44-56
+	Calling File: /environments/prod/main.tf:9-19
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-logging-policies/logging-8
+Check: CKV_AWS_227: "Ensure KMS key is enabled"
+	PASSED for resource: module.kms.aws_kms_key.this["eks_secrets"]
+	File: /modules/kms/main.tf:44-56
+	Calling File: /environments/prod/main.tf:9-19
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/ensure-aws-key-management-service-kms-key-is-enabled
+Check: CKV_AWS_33: "Ensure KMS key policy does not contain wildcard (*) principal"
+	PASSED for resource: module.kms.aws_kms_key.this["eks_secrets"]
+	File: /modules/kms/main.tf:44-56
+	Calling File: /environments/prod/main.tf:9-19
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/ensure-kms-key-policy-does-not-contain-wildcard-principal
+Check: CKV_AWS_7: "Ensure rotation for customer created CMKs is enabled"
+	PASSED for resource: module.kms.aws_kms_key.this["eks_secrets"]
+	File: /modules/kms/main.tf:44-56
+	Calling File: /environments/prod/main.tf:9-19
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-logging-policies/logging-8
+Check: CKV_AWS_227: "Ensure KMS key is enabled"
+	PASSED for resource: module.kms.aws_kms_key.this["s3"]
+	File: /modules/kms/main.tf:44-56
+	Calling File: /environments/prod/main.tf:9-19
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/ensure-aws-key-management-service-kms-key-is-enabled
+Check: CKV_AWS_33: "Ensure KMS key policy does not contain wildcard (*) principal"
+	PASSED for resource: module.kms.aws_kms_key.this["s3"]
+	File: /modules/kms/main.tf:44-56
+	Calling File: /environments/prod/main.tf:9-19
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/ensure-kms-key-policy-does-not-contain-wildcard-principal
+Check: CKV_AWS_7: "Ensure rotation for customer created CMKs is enabled"
+	PASSED for resource: module.kms.aws_kms_key.this["s3"]
+	File: /modules/kms/main.tf:44-56
+	Calling File: /environments/prod/main.tf:9-19
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-logging-policies/logging-8
+Check: CKV_AWS_227: "Ensure KMS key is enabled"
+	PASSED for resource: module.kms.aws_kms_key.this["secrets_manager"]
+	File: /modules/kms/main.tf:44-56
+	Calling File: /environments/prod/main.tf:9-19
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/ensure-aws-key-management-service-kms-key-is-enabled
+Check: CKV_AWS_33: "Ensure KMS key policy does not contain wildcard (*) principal"
+	PASSED for resource: module.kms.aws_kms_key.this["secrets_manager"]
+	File: /modules/kms/main.tf:44-56
+	Calling File: /environments/prod/main.tf:9-19
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/ensure-kms-key-policy-does-not-contain-wildcard-principal
+Check: CKV_AWS_7: "Ensure rotation for customer created CMKs is enabled"
+	PASSED for resource: module.kms.aws_kms_key.this["secrets_manager"]
+	File: /modules/kms/main.tf:44-56
+	Calling File: /environments/prod/main.tf:9-19
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-logging-policies/logging-8
+Check: CKV_AWS_130: "Ensure VPC subnets do not assign public IP by default"
+	PASSED for resource: module.vpc.aws_subnet.public[0]
+	File: /modules/vpc/main.tf:29-41
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-vpc-subnets-do-not-assign-public-ip-by-default
+Check: CKV_AWS_130: "Ensure VPC subnets do not assign public IP by default"
+	PASSED for resource: module.vpc.aws_subnet.private[0]
+	File: /modules/vpc/main.tf:65-76
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-vpc-subnets-do-not-assign-public-ip-by-default
+Check: CKV_AWS_66: "Ensure that CloudWatch Log Group specifies retention days"
+	PASSED for resource: module.vpc.aws_cloudwatch_log_group.flow_logs
+	File: /modules/vpc/main.tf:116-121
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-logging-policies/logging-13
+Check: CKV_AWS_158: "Ensure that CloudWatch Log Group is encrypted by KMS"
+	PASSED for resource: module.vpc.aws_cloudwatch_log_group.flow_logs
+	File: /modules/vpc/main.tf:116-121
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/ensure-that-cloudwatch-log-group-is-encrypted-by-kms
+Check: CKV_AWS_338: "Ensure CloudWatch log groups retains logs for at least 1 year"
+	PASSED for resource: module.vpc.aws_cloudwatch_log_group.flow_logs
+	File: /modules/vpc/main.tf:116-121
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-logging-policies/bc-aws-338
+Check: CKV_AWS_60: "Ensure IAM role allows only specific services or principals to assume it"
+	PASSED for resource: module.vpc.aws_iam_role.flow_logs
+	File: /modules/vpc/main.tf:123-136
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-iam-44
+Check: CKV_AWS_393: "Ensure AWS GitHub Actions OIDC authorization policies only allow safe claims and claim order on IAM role"
+	PASSED for resource: module.vpc.aws_iam_role.flow_logs
+	File: /modules/vpc/main.tf:123-136
+	Calling File: /environments/prod/main.tf:21-31
+Check: CKV_AWS_61: "Ensure AWS IAM policy does not allow assume role permission across all services"
+	PASSED for resource: module.vpc.aws_iam_role.flow_logs
+	File: /modules/vpc/main.tf:123-136
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-iam-45
+Check: CKV_AWS_274: "Disallow IAM roles, users, and groups from using the AWS AdministratorAccess policy"
+	PASSED for resource: module.vpc.aws_iam_role.flow_logs
+	File: /modules/vpc/main.tf:123-136
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-274
+Check: CKV_AWS_287: "Ensure IAM policies does not allow credentials exposure"
+	PASSED for resource: module.vpc.aws_iam_role_policy.flow_logs
+	File: /modules/vpc/main.tf:144-162
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-287
+Check: CKV_AWS_290: "Ensure IAM policies does not allow write access without constraints"
+	PASSED for resource: module.vpc.aws_iam_role_policy.flow_logs
+	File: /modules/vpc/main.tf:144-162
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-290
+Check: CKV_AWS_63: "Ensure no IAM policies documents allow "*" as a statement's actions"
+	PASSED for resource: module.vpc.aws_iam_role_policy.flow_logs
+	File: /modules/vpc/main.tf:144-162
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/iam-48
+Check: CKV_AWS_62: "Ensure IAM policies that allow full "*-*" administrative privileges are not created"
+	PASSED for resource: module.vpc.aws_iam_role_policy.flow_logs
+	File: /modules/vpc/main.tf:144-162
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-iam-45
+Check: CKV_AWS_289: "Ensure IAM policies does not allow permissions management / resource exposure without constraints"
+	PASSED for resource: module.vpc.aws_iam_role_policy.flow_logs
+	File: /modules/vpc/main.tf:144-162
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-289
+Check: CKV_AWS_288: "Ensure IAM policies does not allow data exfiltration"
+	PASSED for resource: module.vpc.aws_iam_role_policy.flow_logs
+	File: /modules/vpc/main.tf:144-162
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-288
+Check: CKV_AWS_286: "Ensure IAM policies does not allow privilege escalation"
+	PASSED for resource: module.vpc.aws_iam_role_policy.flow_logs
+	File: /modules/vpc/main.tf:144-162
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-286
+Check: CKV_AWS_355: "Ensure no IAM policies documents allow "*" as a statement's resource for restrictable actions"
+	PASSED for resource: module.vpc.aws_iam_role_policy.flow_logs
+	File: /modules/vpc/main.tf:144-162
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-355
+Check: CKV_AWS_231: "Ensure no NACL allow ingress from 0.0.0.0:0 to port 3389"
+	PASSED for resource: module.vpc.aws_network_acl_rule.private_deny_ssh_inbound
+	File: /modules/vpc/main.tf:187-196
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nacl-does-not-allow-ingress-from-00000-to-port-3389
+Check: CKV_AWS_230: "Ensure no NACL allow ingress from 0.0.0.0:0 to port 20"
+	PASSED for resource: module.vpc.aws_network_acl_rule.private_deny_ssh_inbound
+	File: /modules/vpc/main.tf:187-196
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nacl-does-not-allow-ingress-from-00000-to-port-20
+Check: CKV_AWS_232: "Ensure no NACL allow ingress from 0.0.0.0:0 to port 22"
+	PASSED for resource: module.vpc.aws_network_acl_rule.private_deny_ssh_inbound
+	File: /modules/vpc/main.tf:187-196
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nacl-does-not-allow-ingress-from-00000-to-port-22
+Check: CKV_AWS_229: "Ensure no NACL allow ingress from 0.0.0.0:0 to port 21"
+	PASSED for resource: module.vpc.aws_network_acl_rule.private_deny_ssh_inbound
+	File: /modules/vpc/main.tf:187-196
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nacl-does-not-allow-ingress-from-00000-to-port-21
+Check: CKV_AWS_352: "Ensure NACL ingress does not allow all Ports"
+	PASSED for resource: module.vpc.aws_network_acl_rule.private_deny_ssh_inbound
+	File: /modules/vpc/main.tf:187-196
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/bc-aws-352
+Check: CKV_AWS_231: "Ensure no NACL allow ingress from 0.0.0.0:0 to port 3389"
+	PASSED for resource: module.vpc.aws_network_acl_rule.private_deny_rdp_inbound
+	File: /modules/vpc/main.tf:198-207
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nacl-does-not-allow-ingress-from-00000-to-port-3389
+Check: CKV_AWS_230: "Ensure no NACL allow ingress from 0.0.0.0:0 to port 20"
+	PASSED for resource: module.vpc.aws_network_acl_rule.private_deny_rdp_inbound
+	File: /modules/vpc/main.tf:198-207
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nacl-does-not-allow-ingress-from-00000-to-port-20
+Check: CKV_AWS_232: "Ensure no NACL allow ingress from 0.0.0.0:0 to port 22"
+	PASSED for resource: module.vpc.aws_network_acl_rule.private_deny_rdp_inbound
+	File: /modules/vpc/main.tf:198-207
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nacl-does-not-allow-ingress-from-00000-to-port-22
+Check: CKV_AWS_229: "Ensure no NACL allow ingress from 0.0.0.0:0 to port 21"
+	PASSED for resource: module.vpc.aws_network_acl_rule.private_deny_rdp_inbound
+	File: /modules/vpc/main.tf:198-207
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nacl-does-not-allow-ingress-from-00000-to-port-21
+Check: CKV_AWS_352: "Ensure NACL ingress does not allow all Ports"
+	PASSED for resource: module.vpc.aws_network_acl_rule.private_deny_rdp_inbound
+	File: /modules/vpc/main.tf:198-207
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/bc-aws-352
+Check: CKV_AWS_231: "Ensure no NACL allow ingress from 0.0.0.0:0 to port 3389"
+	PASSED for resource: module.vpc.aws_network_acl_rule.private_allow_vpc_inbound
+	File: /modules/vpc/main.tf:215-225
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nacl-does-not-allow-ingress-from-00000-to-port-3389
+Check: CKV_AWS_230: "Ensure no NACL allow ingress from 0.0.0.0:0 to port 20"
+	PASSED for resource: module.vpc.aws_network_acl_rule.private_allow_vpc_inbound
+	File: /modules/vpc/main.tf:215-225
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nacl-does-not-allow-ingress-from-00000-to-port-20
+Check: CKV_AWS_232: "Ensure no NACL allow ingress from 0.0.0.0:0 to port 22"
+	PASSED for resource: module.vpc.aws_network_acl_rule.private_allow_vpc_inbound
+	File: /modules/vpc/main.tf:215-225
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nacl-does-not-allow-ingress-from-00000-to-port-22
+Check: CKV_AWS_229: "Ensure no NACL allow ingress from 0.0.0.0:0 to port 21"
+	PASSED for resource: module.vpc.aws_network_acl_rule.private_allow_vpc_inbound
+	File: /modules/vpc/main.tf:215-225
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nacl-does-not-allow-ingress-from-00000-to-port-21
+Check: CKV_AWS_230: "Ensure no NACL allow ingress from 0.0.0.0:0 to port 20"
+	PASSED for resource: module.vpc.aws_network_acl_rule.private_allow_ephemeral_inbound
+	File: /modules/vpc/main.tf:236-246
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nacl-does-not-allow-ingress-from-00000-to-port-20
+Check: CKV_AWS_232: "Ensure no NACL allow ingress from 0.0.0.0:0 to port 22"
+	PASSED for resource: module.vpc.aws_network_acl_rule.private_allow_ephemeral_inbound
+	File: /modules/vpc/main.tf:236-246
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nacl-does-not-allow-ingress-from-00000-to-port-22
+Check: CKV_AWS_229: "Ensure no NACL allow ingress from 0.0.0.0:0 to port 21"
+	PASSED for resource: module.vpc.aws_network_acl_rule.private_allow_ephemeral_inbound
+	File: /modules/vpc/main.tf:236-246
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nacl-does-not-allow-ingress-from-00000-to-port-21
+Check: CKV_AWS_352: "Ensure NACL ingress does not allow all Ports"
+	PASSED for resource: module.vpc.aws_network_acl_rule.private_allow_ephemeral_inbound
+	File: /modules/vpc/main.tf:236-246
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/bc-aws-352
+Check: CKV_AWS_231: "Ensure no NACL allow ingress from 0.0.0.0:0 to port 3389"
+	PASSED for resource: module.vpc.aws_network_acl_rule.private_allow_all_outbound
+	File: /modules/vpc/main.tf:256-265
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nacl-does-not-allow-ingress-from-00000-to-port-3389
+Check: CKV_AWS_230: "Ensure no NACL allow ingress from 0.0.0.0:0 to port 20"
+	PASSED for resource: module.vpc.aws_network_acl_rule.private_allow_all_outbound
+	File: /modules/vpc/main.tf:256-265
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nacl-does-not-allow-ingress-from-00000-to-port-20
+Check: CKV_AWS_232: "Ensure no NACL allow ingress from 0.0.0.0:0 to port 22"
+	PASSED for resource: module.vpc.aws_network_acl_rule.private_allow_all_outbound
+	File: /modules/vpc/main.tf:256-265
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nacl-does-not-allow-ingress-from-00000-to-port-22
+Check: CKV_AWS_229: "Ensure no NACL allow ingress from 0.0.0.0:0 to port 21"
+	PASSED for resource: module.vpc.aws_network_acl_rule.private_allow_all_outbound
+	File: /modules/vpc/main.tf:256-265
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nacl-does-not-allow-ingress-from-00000-to-port-21
+Check: CKV_AWS_130: "Ensure VPC subnets do not assign public IP by default"
+	PASSED for resource: module.vpc.aws_subnet.public[1]
+	File: /modules/vpc/main.tf:29-41
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-vpc-subnets-do-not-assign-public-ip-by-default
+Check: CKV_AWS_130: "Ensure VPC subnets do not assign public IP by default"
+	PASSED for resource: module.vpc.aws_subnet.public[2]
+	File: /modules/vpc/main.tf:29-41
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-vpc-subnets-do-not-assign-public-ip-by-default
+Check: CKV_AWS_130: "Ensure VPC subnets do not assign public IP by default"
+	PASSED for resource: module.vpc.aws_subnet.private[1]
+	File: /modules/vpc/main.tf:65-76
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-vpc-subnets-do-not-assign-public-ip-by-default
+Check: CKV_AWS_130: "Ensure VPC subnets do not assign public IP by default"
+	PASSED for resource: module.vpc.aws_subnet.private[2]
+	File: /modules/vpc/main.tf:65-76
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-vpc-subnets-do-not-assign-public-ip-by-default
+Check: CKV2_AWS_35: "AWS NAT Gateways should be utilized for the default route"
+	PASSED for resource: module.vpc.aws_route_table.public
+	File: /modules/vpc/main.tf:43-46
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nat-gateways-are-utilized-for-the-default-route
+Check: CKV2_AWS_35: "AWS NAT Gateways should be utilized for the default route"
+	PASSED for resource: module.vpc.aws_route.public_internet_access
+	File: /modules/vpc/main.tf:48-52
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nat-gateways-are-utilized-for-the-default-route
+Check: CKV2_AWS_35: "AWS NAT Gateways should be utilized for the default route"
+	PASSED for resource: module.vpc.aws_route_table.private[0]
+	File: /modules/vpc/main.tf:93-97
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nat-gateways-are-utilized-for-the-default-route
+Check: CKV2_AWS_35: "AWS NAT Gateways should be utilized for the default route"
+	PASSED for resource: module.vpc.aws_route.private_nat_access[0]
+	File: /modules/vpc/main.tf:99-104
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nat-gateways-are-utilized-for-the-default-route
+Check: CKV2_AWS_35: "AWS NAT Gateways should be utilized for the default route"
+	PASSED for resource: module.vpc.aws_route_table.private[1]
+	File: /modules/vpc/main.tf:93-97
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nat-gateways-are-utilized-for-the-default-route
+Check: CKV2_AWS_35: "AWS NAT Gateways should be utilized for the default route"
+	PASSED for resource: module.vpc.aws_route_table.private[2]
+	File: /modules/vpc/main.tf:93-97
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nat-gateways-are-utilized-for-the-default-route
+Check: CKV2_AWS_35: "AWS NAT Gateways should be utilized for the default route"
+	PASSED for resource: module.vpc.aws_route.private_nat_access[1]
+	File: /modules/vpc/main.tf:99-104
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nat-gateways-are-utilized-for-the-default-route
+Check: CKV2_AWS_35: "AWS NAT Gateways should be utilized for the default route"
+	PASSED for resource: module.vpc.aws_route.private_nat_access[2]
+	File: /modules/vpc/main.tf:99-104
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nat-gateways-are-utilized-for-the-default-route
+Check: CKV2_AWS_11: "Ensure VPC flow logging is enabled in all VPCs"
+	PASSED for resource: module.vpc.aws_vpc.this
+	File: /modules/vpc/main.tf:5-13
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-logging-policies/logging-9-enable-vpc-flow-logging
+Check: CKV2_AWS_44: "Ensure AWS route table with VPC peering does not contain routes overly permissive to all traffic"
+	PASSED for resource: module.vpc.aws_route_table.public
+	File: /modules/vpc/main.tf:43-46
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-route-table-with-vpc-peering-does-not-contain-routes-overly-permissive-to-all-traffic
+Check: CKV2_AWS_44: "Ensure AWS route table with VPC peering does not contain routes overly permissive to all traffic"
+	PASSED for resource: module.vpc.aws_route.public_internet_access
+	File: /modules/vpc/main.tf:48-52
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-route-table-with-vpc-peering-does-not-contain-routes-overly-permissive-to-all-traffic
+Check: CKV2_AWS_44: "Ensure AWS route table with VPC peering does not contain routes overly permissive to all traffic"
+	PASSED for resource: module.vpc.aws_route_table.private[0]
+	File: /modules/vpc/main.tf:93-97
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-route-table-with-vpc-peering-does-not-contain-routes-overly-permissive-to-all-traffic
+Check: CKV2_AWS_44: "Ensure AWS route table with VPC peering does not contain routes overly permissive to all traffic"
+	PASSED for resource: module.vpc.aws_route.private_nat_access[0]
+	File: /modules/vpc/main.tf:99-104
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-route-table-with-vpc-peering-does-not-contain-routes-overly-permissive-to-all-traffic
+Check: CKV2_AWS_44: "Ensure AWS route table with VPC peering does not contain routes overly permissive to all traffic"
+	PASSED for resource: module.vpc.aws_route_table.private[1]
+	File: /modules/vpc/main.tf:93-97
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-route-table-with-vpc-peering-does-not-contain-routes-overly-permissive-to-all-traffic
+Check: CKV2_AWS_44: "Ensure AWS route table with VPC peering does not contain routes overly permissive to all traffic"
+	PASSED for resource: module.vpc.aws_route_table.private[2]
+	File: /modules/vpc/main.tf:93-97
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-route-table-with-vpc-peering-does-not-contain-routes-overly-permissive-to-all-traffic
+Check: CKV2_AWS_44: "Ensure AWS route table with VPC peering does not contain routes overly permissive to all traffic"
+	PASSED for resource: module.vpc.aws_route.private_nat_access[1]
+	File: /modules/vpc/main.tf:99-104
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-route-table-with-vpc-peering-does-not-contain-routes-overly-permissive-to-all-traffic
+Check: CKV2_AWS_44: "Ensure AWS route table with VPC peering does not contain routes overly permissive to all traffic"
+	PASSED for resource: module.vpc.aws_route.private_nat_access[2]
+	File: /modules/vpc/main.tf:99-104
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-route-table-with-vpc-peering-does-not-contain-routes-overly-permissive-to-all-traffic
+Check: CKV2_AWS_5: "Ensure that Security Groups are attached to another resource"
+	PASSED for resource: module.eks.aws_security_group.cluster
+	File: /modules/eks/main.tf:19-29
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-that-security-groups-are-attached-to-ec2-instances-or-elastic-network-interfaces-enis
+Check: CKV2_AWS_5: "Ensure that Security Groups are attached to another resource"
+	PASSED for resource: module.eks.aws_security_group.nodes
+	File: /modules/eks/main.tf:50-63
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-that-security-groups-are-attached-to-ec2-instances-or-elastic-network-interfaces-enis
+Check: CKV2_AWS_56: "Ensure AWS Managed IAMFullAccess IAM policy is not used."
+	PASSED for resource: aws_iam_role.external_secrets_irsa
+	File: /environments/prod/main.tf:92-96
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-2-56
+Check: CKV2_AWS_56: "Ensure AWS Managed IAMFullAccess IAM policy is not used."
+	PASSED for resource: module.iam.aws_iam_role.eks_cluster
+	File: /modules/iam/main.tf:4-17
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-2-56
+Check: CKV2_AWS_56: "Ensure AWS Managed IAMFullAccess IAM policy is not used."
+	PASSED for resource: module.iam.aws_iam_role_policy_attachment.eks_cluster_policy
+	File: /modules/iam/main.tf:19-22
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-2-56
+Check: CKV2_AWS_56: "Ensure AWS Managed IAMFullAccess IAM policy is not used."
+	PASSED for resource: module.iam.aws_iam_role.eks_node
+	File: /modules/iam/main.tf:28-41
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-2-56
+Check: CKV2_AWS_56: "Ensure AWS Managed IAMFullAccess IAM policy is not used."
+	PASSED for resource: module.iam.aws_iam_role_policy_attachment.eks_node_policies["arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"]
+	File: /modules/iam/main.tf:43-51
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-2-56
+Check: CKV2_AWS_56: "Ensure AWS Managed IAMFullAccess IAM policy is not used."
+	PASSED for resource: module.iam.aws_iam_role.github_actions_deploy
+	File: /modules/iam/main.tf:93-115
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-2-56
+Check: CKV2_AWS_56: "Ensure AWS Managed IAMFullAccess IAM policy is not used."
+	PASSED for resource: module.iam.aws_iam_role.break_glass_admin
+	File: /modules/iam/main.tf:314-338
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-2-56
+Check: CKV2_AWS_56: "Ensure AWS Managed IAMFullAccess IAM policy is not used."
+	PASSED for resource: module.iam.aws_iam_role_policy_attachment.break_glass_admin
+	File: /modules/iam/main.tf:340-348
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-2-56
+Check: CKV2_AWS_56: "Ensure AWS Managed IAMFullAccess IAM policy is not used."
+	PASSED for resource: module.vpc.aws_iam_role.flow_logs
+	File: /modules/vpc/main.tf:123-136
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-2-56
+Check: CKV2_AWS_56: "Ensure AWS Managed IAMFullAccess IAM policy is not used."
+	PASSED for resource: module.iam.aws_iam_role_policy_attachment.eks_node_policies["arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"]
+	File: /modules/iam/main.tf:43-51
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-2-56
+Check: CKV2_AWS_56: "Ensure AWS Managed IAMFullAccess IAM policy is not used."
+	PASSED for resource: module.iam.aws_iam_role_policy_attachment.eks_node_policies["arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"]
+	File: /modules/iam/main.tf:43-51
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-2-56
+Check: CKV2_AWS_19: "Ensure that all EIP addresses allocated to a VPC are attached to EC2 instances"
+	PASSED for resource: module.vpc.aws_eip.nat[0]
+	File: /modules/vpc/main.tf:78-82
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-that-all-eip-addresses-allocated-to-a-vpc-are-attached-to-ec2-instances
+Check: CKV2_AWS_19: "Ensure that all EIP addresses allocated to a VPC are attached to EC2 instances"
+	PASSED for resource: module.vpc.aws_eip.nat[1]
+	File: /modules/vpc/main.tf:78-82
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-that-all-eip-addresses-allocated-to-a-vpc-are-attached-to-ec2-instances
+Check: CKV2_AWS_19: "Ensure that all EIP addresses allocated to a VPC are attached to EC2 instances"
+	PASSED for resource: module.vpc.aws_eip.nat[2]
+	File: /modules/vpc/main.tf:78-82
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-that-all-eip-addresses-allocated-to-a-vpc-are-attached-to-ec2-instances
+Check: CKV2_AWS_40: "Ensure AWS IAM policy does not allow full IAM privileges"
+	PASSED for resource: aws_iam_policy_document.external_secrets_trust
+	File: /environments/prod/main.tf:68-90
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-2-40
+Check: CKV2_AWS_40: "Ensure AWS IAM policy does not allow full IAM privileges"
+	PASSED for resource: module.iam.aws_iam_policy.external_secrets
+	File: /modules/iam/main.tf:60-77
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-2-40
+Check: CKV2_AWS_40: "Ensure AWS IAM policy does not allow full IAM privileges"
+	PASSED for resource: module.iam.aws_iam_role_policy.github_actions_deploy
+	File: /modules/iam/main.tf:135-303
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-2-40
+Check: CKV2_AWS_40: "Ensure AWS IAM policy does not allow full IAM privileges"
+	PASSED for resource: module.vpc.aws_iam_role_policy.flow_logs
+	File: /modules/vpc/main.tf:144-162
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-2-40
+Check: CKV2_AWS_64: "Ensure KMS key Policy is defined"
+	PASSED for resource: module.kms.aws_kms_key.this["cloudwatch_logs"]
+	File: /modules/kms/main.tf:44-56
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-2-64
+Check: CKV2_AWS_64: "Ensure KMS key Policy is defined"
+	PASSED for resource: module.kms.aws_kms_key.this["ebs"]
+	File: /modules/kms/main.tf:44-56
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-2-64
+Check: CKV2_AWS_64: "Ensure KMS key Policy is defined"
+	PASSED for resource: module.kms.aws_kms_key.this["eks_secrets"]
+	File: /modules/kms/main.tf:44-56
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-2-64
+Check: CKV2_AWS_64: "Ensure KMS key Policy is defined"
+	PASSED for resource: module.kms.aws_kms_key.this["s3"]
+	File: /modules/kms/main.tf:44-56
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-2-64
+Check: CKV2_AWS_64: "Ensure KMS key Policy is defined"
+	PASSED for resource: module.kms.aws_kms_key.this["secrets_manager"]
+	File: /modules/kms/main.tf:44-56
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-2-64
+Check: CKV2_AWS_12: "Ensure the default security group of every VPC restricts all traffic"
+	PASSED for resource: module.vpc.aws_vpc.this
+	File: /modules/vpc/main.tf:5-13
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-4
+Check: CKV_AWS_382: "Ensure no security groups allow egress from 0.0.0.0:0 to port -1"
+	SKIPPED for resource: module.eks.aws_security_group_rule.cluster_egress_all
+	Suppress comment:  see justification above - NAT-gated egress from a private-subnet-only ENI, not a public exposure.
+	File: /modules/eks/main.tf:39-48
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/bc-aws-382
+Check: CKV_AWS_382: "Ensure no security groups allow egress from 0.0.0.0:0 to port -1"
+	SKIPPED for resource: module.eks.aws_security_group_rule.nodes_egress_all
+	Suppress comment:  see justification above - NAT-gated egress from a private-subnet-only ENI, not a public exposure.
+	File: /modules/eks/main.tf:100-109
+	Calling File: /environments/prod/main.tf:46-59
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/bc-aws-382
+Check: CKV_AWS_355: "Ensure no IAM policies documents allow "*" as a statement's resource for restrictable actions"
+	SKIPPED for resource: module.iam.aws_iam_role_policy.github_actions_deploy
+	Suppress comment:  Resource "*" appears only on the ReadOnlyDescribeUnavoidablyUnscoped, ManageVpcNetworking, and kms:CreateKey statements below, each commented with why AWS's IAM model doesn't support resource-level scoping for those specific actions. Every other statement is scoped to a name-prefixed or explicit ARN.
+	File: /modules/iam/main.tf:135-303
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-355
+Check: CKV_AWS_274: "Disallow IAM roles, users, and groups from using the AWS AdministratorAccess policy"
+	SKIPPED for resource: module.iam.aws_iam_role_policy_attachment.break_glass_admin
+	Suppress comment:  intentional break-glass role, not day-to-day access.
+	File: /modules/iam/main.tf:340-348
+	Calling File: /environments/prod/main.tf:33-44
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-274
+Check: CKV_AWS_352: "Ensure NACL ingress does not allow all Ports"
+	SKIPPED for resource: module.vpc.aws_network_acl_rule.private_allow_vpc_inbound
+	Suppress comment:  intra-VPC only (cidr_block = var.vpc_cidr), see justification above.
+	File: /modules/vpc/main.tf:215-225
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/bc-aws-352
+Check: CKV_AWS_231: "Ensure no NACL allow ingress from 0.0.0.0:0 to port 3389"
+	SKIPPED for resource: module.vpc.aws_network_acl_rule.private_allow_ephemeral_inbound
+	Suppress comment:  this is the stateless-NACL ephemeral-port return-traffic rule, not a direct RDP allow - the dedicated deny rule for port 3389 above (rule_number 91) is evaluated first and wins.
+	File: /modules/vpc/main.tf:236-246
+	Calling File: /environments/prod/main.tf:21-31
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-nacl-does-not-allow-ingress-from-00000-to-port-3389
+Check: CKV2_AWS_1: "Ensure that all NACL are attached to subnets"
+	SKIPPED for resource: module.vpc.aws_network_acl.private
+	Suppress comment:  subnet_ids is populated (aws_subnet.private[*].id below) - Checkov's static analysis doesn't resolve splat expressions against a count-based resource here, producing a false positive. Confirmed via `terraform plan`: every private subnet is associated.
+	File: /modules/vpc/main.tf:180-185
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-that-all-nacl-are-attached-to-subnets
+

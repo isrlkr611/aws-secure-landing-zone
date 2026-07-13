@@ -1,0 +1,51 @@
+# Namespace-scoped Roles only (no ClusterRoles for app teams) - a
+# compromised or over-broadly-bound identity in this namespace cannot list
+# or touch resources anywhere else in the cluster.
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: app-developer
+  namespace: app
+rules:
+  # Read/write on workload objects, but no ability to exec/attach/port-forward
+  # into running pods - "developer" here means "ships manifests", not
+  # "gets a shell in prod".
+  - apiGroups: ["apps"]
+    resources: ["deployments", "replicasets", "statefulsets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: [""]
+    resources: ["services", "configmaps"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: [""]
+    resources: ["pods", "pods/log"]
+    verbs: ["get", "list", "watch"]
+  # Secrets are deliberately excluded - they are managed exclusively by the
+  # External Secrets Operator syncing from AWS Secrets Manager, never
+  # created/edited by hand. See kubernetes/external-secrets/.
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: app-readonly
+  namespace: app
+rules:
+  - apiGroups: ["", "apps", "networking.k8s.io"]
+    resources: ["pods", "pods/log", "services", "deployments", "replicasets", "configmaps", "networkpolicies"]
+    verbs: ["get", "list", "watch"]
+---
+# Namespace-scoped operator role for the External Secrets controller
+# instance watching this namespace - can manage ExternalSecret objects and
+# write the Kubernetes Secret it produces, nothing else.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: external-secrets-operator
+  namespace: app
+rules:
+  - apiGroups: ["external-secrets.io"]
+    resources: ["externalsecrets", "secretstores"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]

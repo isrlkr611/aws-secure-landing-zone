@@ -1,0 +1,38 @@
+
+======================================================
+tfsec is joining the Trivy family
+
+tfsec will continue to remain available 
+for the time being, although our engineering 
+attention will be directed at Trivy going forward.
+
+You can read more here: 
+https://github.com/aquasecurity/tfsec/discussions/1994
+======================================================
+  timings
+  ──────────────────────────────────────────
+  disk i/o             715.778µs
+  parsing              55.512623ms
+  adaptation           2.119256ms
+  checks               22.658203ms
+  total                81.00586ms
+
+  counts
+  ──────────────────────────────────────────
+  modules downloaded   0
+  modules processed    9
+  blocks processed     250
+  files read           32
+
+  results
+  ──────────────────────────────────────────
+  passed               70
+  ignored              20
+  critical             0
+  high                 0
+  medium               0
+  low                  0
+
+
+No problems detected!
+

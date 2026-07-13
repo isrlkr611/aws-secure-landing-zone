@@ -1,0 +1,58 @@
+# Reference Deployment that satisfies the "restricted" Pod Security Standard
+# enforced on the `app` namespace (kubernetes/namespaces.yaml). Every field
+# below that's required for "restricted" is called out - remove one and the
+# API server rejects the pod outright rather than silently allowing it.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: app
+  labels:
+    app: backend
+    tier: backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+        tier: backend
+    spec:
+      serviceAccountName: app-workload
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true            # required by "restricted"
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault        # required by "restricted"
+      containers:
+        - name: backend
+          image: ghcr.io/example-org/backend:1.4.2 # pinned digest in real deployments, scanned by Trivy in CI first
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: db-credentials  # populated by the External Secrets Operator, never inlined
+          securityContext:
+            allowPrivilegeEscalation: false # required by "restricted"
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]           # required by "restricted"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {} # writable scratch space since the root filesystem is read-only

@@ -1,0 +1,70 @@
+name: Container Image Scan (Trivy)
+
+# Builds the application image and scans it before it's ever pushed to a
+# registry or referenced by a Kubernetes manifest. Fails the build on
+# CRITICAL/HIGH vulnerabilities so a vulnerable image can't reach the
+# `backend` Deployment (kubernetes/pod-security/hardened-deployment-example.yaml)
+# in the first place.
+#
+# This workflow expects a Dockerfile at the repo root; adjust `context` /
+# `file` below once the application source lives in this repo alongside the
+# infrastructure code.
+
+on:
+  pull_request:
+    paths:
+      - "Dockerfile"
+      - "src/**"
+      - ".github/workflows/image-scan-trivy.yml"
+  push:
+    branches: [main]
+    paths:
+      - "Dockerfile"
+      - "src/**"
+
+permissions:
+  contents: read
+  security-events: write # to upload SARIF to the Security tab
+
+jobs:
+  build-and-scan:
+    name: Build image and scan with Trivy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t app:${{ github.sha }} .
+
+      - name: Scan image with Trivy (fail on CRITICAL/HIGH)
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: app:${{ github.sha }}
+          format: table
+          severity: CRITICAL,HIGH
+          exit-code: "1"
+          ignore-unfixed: true # don't block on CVEs with no available fix yet
+
+      - name: Scan image again for SARIF report (non-blocking, for Security tab)
+        if: always()
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: app:${{ github.sha }}
+          format: sarif
+          output: trivy-results.sarif
+          severity: CRITICAL,HIGH,MEDIUM
+          exit-code: "0"
+
+      - name: Upload SARIF to code scanning
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
+
+      - name: Scan Kubernetes manifests for misconfigurations
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          scan-type: config
+          scan-ref: kubernetes/
+          exit-code: "1"
+          severity: CRITICAL,HIGH

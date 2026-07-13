@@ -1,0 +1,22 @@
+# Only the frontend tier accepts inbound traffic from outside the pod
+# network (the ALB / ingress controller). Every other tier is unreachable
+# from outside the cluster even if someone points a Service at it directly.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-from-lb
+  namespace: app
+spec:
+  podSelector:
+    matchLabels:
+      tier: frontend
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 8080

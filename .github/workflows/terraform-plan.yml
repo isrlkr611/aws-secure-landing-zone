@@ -1,0 +1,45 @@
+name: Terraform Plan
+
+# Demonstrates the OIDC federation set up in terraform/modules/iam
+# (aws_iam_openid_connect_provider.github_actions +
+# aws_iam_role.github_actions_deploy): no AWS access key/secret is stored
+# in GitHub - the workflow exchanges its OIDC token for short-lived
+# credentials scoped to this exact repo+branch. Runs plan-only on PRs;
+# apply is intentionally a separate, manually-approved step (see
+# docs/architecture.md) rather than part of this workflow.
+
+on:
+  pull_request:
+    paths:
+      - "terraform/**"
+
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
+jobs:
+  plan:
+    name: terraform plan (prod)
+    runs-on: ubuntu-latest
+    needs: [] # depends on terraform-security-scan.yml passing via branch protection, not a job dependency here
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.8"
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }} # terraform output: github_actions_deploy_role_arn
+          aws-region: eu-west-3
+
+      - name: terraform init
+        working-directory: terraform/environments/prod
+        run: terraform init
+
+      - name: terraform plan
+        working-directory: terraform/environments/prod
+        run: terraform plan -no-color -input=false

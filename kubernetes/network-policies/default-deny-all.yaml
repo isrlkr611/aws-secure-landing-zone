@@ -1,0 +1,16 @@
+# Default-deny for the app namespace: with no other NetworkPolicy selecting
+# a pod, this blocks ALL ingress and egress, including cross-namespace and
+# node-local traffic. Every other policy in this directory is a narrow
+# exception layered on top - "deny by default, allow by exception" rather
+# than the reverse, which is the only version of network segmentation that
+# survives someone forgetting to write a policy for a new app.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: app
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress

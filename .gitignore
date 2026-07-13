@@ -1,0 +1,29 @@
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.tfvars
+!*.tfvars.example
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+.terraform.lock.hcl
+
+# Checkov / tfsec local run artifacts
+.checkov.yml.bak
+
+# OS / editor
+.DS_Store
+*.swp
+.vscode/
+.idea/
+
+# Secrets (defense in depth: never commit these even by accident)
+*.pem
+*.key
+kubeconfig*

@@ -1,0 +1,27 @@
+# Copy to terraform.tfvars and fill in real values. terraform.tfvars is
+# gitignored so account-specific data never gets committed.
+
+account_id  = "123456789012"
+name_prefix = "slz-prod"
+aws_region  = "eu-west-3"
+
+# Must match the bucket/table configured in backend.tf - passed separately
+# here so the CI/CD deploy role's IAM policy can be scoped to these exact
+# ARNs instead of s3:*/dynamodb:* on every table in the account.
+state_bucket_arn     = "arn:aws:s3:::REPLACE_WITH_YOUR_TFSTATE_BUCKET"
+state_lock_table_arn = "arn:aws:dynamodb:eu-west-3:123456789012:table/REPLACE_WITH_YOUR_TF_LOCK_TABLE"
+
+github_org  = "your-github-username-or-org"
+github_repo = "aws-secure-landing-zone"
+
+# Human operators allowed to assume the MFA-gated break-glass admin role.
+human_admin_principal_arns = [
+  "arn:aws:iam::123456789012:user/alice",
+]
+
+# Restrict the public EKS API endpoint to known source IPs (office/VPN
+# egress, GitHub Actions runners if not using self-hosted runners in the
+# VPC). Never set this to ["0.0.0.0/0"].
+cluster_endpoint_public_access_cidrs = [
+  "203.0.113.4/32",
+]

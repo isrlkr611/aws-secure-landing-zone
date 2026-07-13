@@ -1,0 +1,22 @@
+# Backend can reach the database tier on its port; frontend cannot reach the
+# database directly at all - a compromised frontend pod (the tier most
+# exposed to user input) has no network path to data at rest.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-backend-to-db
+  namespace: app
+spec:
+  podSelector:
+    matchLabels:
+      tier: database
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              tier: backend
+      ports:
+        - protocol: TCP
+          port: 5432

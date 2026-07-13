@@ -1,0 +1,103 @@
+name: Terraform Security Scan
+
+# Runs on every PR touching Terraform, and on pushes to main as a
+# post-merge guardrail. tfsec and Checkov both fail the job (non-zero exit)
+# on any HIGH/CRITICAL finding, which GitHub then surfaces as a failed
+# required check - this is what "blocks the merge" in practice, via branch
+# protection requiring this workflow to pass.
+
+on:
+  pull_request:
+    paths:
+      - "terraform/**"
+      - ".github/workflows/terraform-security-scan.yml"
+  push:
+    branches: [main]
+    paths:
+      - "terraform/**"
+
+permissions:
+  contents: read
+  pull-requests: write # to post scan results as a PR comment
+  id-token: write        # OIDC for the plan job's AWS credentials
+
+jobs:
+  fmt-and-validate:
+    name: terraform fmt / validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.8"
+
+      - name: terraform fmt check
+        run: terraform fmt -check -recursive terraform/
+
+      - name: terraform validate (per module/environment)
+        run: |
+          set -e
+          for dir in terraform/environments/*/ terraform/modules/*/; do
+            echo "== $dir =="
+            (cd "$dir" && terraform init -backend=false -input=false && terraform validate)
+          done
+
+  tfsec:
+    name: tfsec
+    runs-on: ubuntu-latest
+    needs: fmt-and-validate
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run tfsec
+        uses: aquasecurity/tfsec-action@v1.0.3
+        with:
+          working_directory: terraform/
+          soft_fail: false # any HIGH/CRITICAL finding fails the job
+
+  checkov:
+    name: Checkov
+    runs-on: ubuntu-latest
+    needs: fmt-and-validate
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Checkov
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: terraform/
+          framework: terraform
+          quiet: true
+          soft_fail: false # fails the job on any finding at/above the configured severity
+          output_format: cli,sarif
+          output_file_path: console,checkov-results.sarif
+
+      - name: Upload SARIF to code scanning
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: checkov-results.sarif
+
+  kubernetes-manifests:
+    name: kubeconform (K8s manifests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install kubeconform
+        run: |
+          curl -fsSL -o kubeconform.tar.gz \
+            https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz
+          tar -xzf kubeconform.tar.gz kubeconform
+          sudo mv kubeconform /usr/local/bin/kubeconform
+
+      - name: Validate manifests against upstream schemas
+        # -ignore-missing-schemas: this repo also ships Calico
+        # (projectcalico.org/v3) and External Secrets (external-secrets.io)
+        # custom resources, which have no published OpenAPI schema for
+        # kubeconform to check against - built-in Kubernetes types are
+        # still validated strictly.
+        run: |
+          kubeconform -strict -ignore-missing-schemas -summary \
+            $(find kubernetes/ -name '*.yaml')
