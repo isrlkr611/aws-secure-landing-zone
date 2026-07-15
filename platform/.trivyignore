@@ -1,0 +1,46 @@
+# Accepted, documented risk - NOT a blanket suppression.
+#
+# Every CVE below is in usr/local/bin/subfinder's embedded Go dependencies
+# (golang.org/x/crypto and the Go stdlib the v2.14.0 release binary was
+# built against), not in this project's own code or its Python
+# dependencies. subfinder is invoked as a subprocess for passive OSINT
+# lookups only (see app/services/subdomain_scan.py) - it never accepts
+# inbound connections, and the container it runs in has no capabilities
+# beyond what platform/k8s/network-policy.yaml explicitly allows (see
+# platform/README.md "Container image scan results" for the full
+# rationale). The mechanical fix is bumping the Dockerfile's
+# SUBFINDER_VERSION build arg once upstream publishes a release built
+# against a patched Go toolchain - this file should be regenerated (not
+# just re-approved) at that point by re-running:
+#   trivy image --severity CRITICAL,HIGH --ignore-unfixed <image>
+# and diffing against this list, since a NEW CVE not already listed here
+# will still correctly fail the build.
+
+CVE-2025-22874
+CVE-2025-61726
+CVE-2025-61729
+CVE-2025-68121
+CVE-2026-25679
+CVE-2026-25681
+CVE-2026-27136
+CVE-2026-27145
+CVE-2026-32280
+CVE-2026-32281
+CVE-2026-32283
+CVE-2026-33811
+CVE-2026-33814
+CVE-2026-39820
+CVE-2026-39821
+CVE-2026-39822
+CVE-2026-39828
+CVE-2026-39829
+CVE-2026-39830
+CVE-2026-39831
+CVE-2026-39832
+CVE-2026-39835
+CVE-2026-39836
+CVE-2026-42499
+CVE-2026-42504
+CVE-2026-42508
+CVE-2026-46595
+CVE-2026-46597

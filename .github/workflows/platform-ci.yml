@@ -65,6 +65,10 @@ jobs:
       - name: Build image
         run: docker build -t attack-surface-monitor-api:${{ github.sha }} .
 
+      # trivy-action is a composite action - it does NOT inherit this job's
+      # `defaults.run.working-directory: platform` (that only applies to
+      # `run:` steps in this workflow file itself), so every path below is
+      # given relative to the repo root, not platform/.
       - name: Scan image with Trivy (fail on fixable CRITICAL/HIGH)
         uses: aquasecurity/trivy-action@v0.36.0
         with:
@@ -73,6 +77,11 @@ jobs:
           severity: CRITICAL,HIGH
           exit-code: "1"
           ignore-unfixed: true
+          # Documented, CVE-by-CVE accepted risk in the subfinder binary's
+          # embedded Go deps - see platform/.trivyignore and
+          # platform/README.md "Container image scan results". A NEW CVE
+          # not already in that file still correctly fails this step.
+          trivyignores: platform/.trivyignore
 
       - name: Scan again for SARIF report (non-blocking, for Security tab)
         if: always()
@@ -83,12 +92,15 @@ jobs:
           output: trivy-platform-results.sarif
           severity: CRITICAL,HIGH,MEDIUM
           exit-code: "0"
+          # No trivyignores here on purpose: the Security tab should still
+          # show the accepted subfinder findings for visibility/tracking,
+          # even though they don't fail the build above.
 
       - name: Upload SARIF to code scanning
         if: always()
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: platform/trivy-platform-results.sarif
+          sarif_file: trivy-platform-results.sarif
 
   kubernetes-manifests:
     name: kubeconform (platform/k8s)
