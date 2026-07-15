@@ -1,0 +1,85 @@
+{
+  "totals": {
+    "passed": 194,
+    "failed": 0,
+    "skipped": 7,
+    "parsing_errors": 0,
+    "resource_count": 75,
+    "checkov_version": "3.3.8"
+  },
+  "frameworks": {
+    "pci_dss": {
+      "passed": 162,
+      "failed": 0,
+      "skipped": 6,
+      "evaluated": 162,
+      "compliance_pct": 100.0
+    },
+    "soc2": {
+      "passed": 162,
+      "failed": 0,
+      "skipped": 6,
+      "evaluated": 162,
+      "compliance_pct": 100.0
+    },
+    "iso27001": {
+      "passed": 194,
+      "failed": 0,
+      "skipped": 7,
+      "evaluated": 194,
+      "compliance_pct": 100.0
+    },
+    "nis2": {
+      "passed": 162,
+      "failed": 0,
+      "skipped": 6,
+      "evaluated": 162,
+      "compliance_pct": 100.0
+    }
+  },
+  "themes": {
+    "iam_least_privilege": {
+      "passed": 70,
+      "failed": 0,
+      "skipped": 2,
+      "evaluated": 70,
+      "compliance_pct": 100.0
+    },
+    "authentication_and_secrets": {
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "evaluated": 9,
+      "compliance_pct": 100.0
+    },
+    "logging_and_monitoring": {
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "evaluated": 6,
+      "compliance_pct": 100.0
+    },
+    "encryption_at_rest": {
+      "passed": 23,
+      "failed": 0,
+      "skipped": 0,
+      "evaluated": 23,
+      "compliance_pct": 100.0
+    },
+    "config_hygiene": {
+      "passed": 32,
+      "failed": 0,
+      "skipped": 1,
+      "evaluated": 32,
+      "compliance_pct": 100.0
+    },
+    "network_exposure": {
+      "passed": 54,
+      "failed": 0,
+      "skipped": 4,
+      "evaluated": 54,
+      "compliance_pct": 100.0
+    }
+  },
+  "unmapped_checks": {}
+}

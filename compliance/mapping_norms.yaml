@@ -1,0 +1,210 @@
+# Maps this repo's actual Checkov findings (terraform/ scan) to specific
+# compliance framework clauses, grouped by control theme rather than
+# repeated per check_id - most checks in a theme (e.g. every "no ingress
+# from 0.0.0.0/0 to port X" rule) map to the same handful of clauses, and
+# listing them individually would just be noisy duplication.
+#
+# Only check IDs that actually appear when scanning terraform/ in this repo
+# are included (see: `checkov -d terraform/ --output json`, 61 distinct
+# check_ids as of this writing). This is deliberately NOT a general-purpose
+# "every Checkov AWS check ever" mapping - compliance/generate_report.py
+# reports any check_id it encounters that ISN'T in here as "unmapped"
+# rather than silently dropping it, specifically so this file's coverage
+# gaps are visible instead of hidden.
+#
+# Framework references were chosen conservatively: only included where the
+# control theme maps clearly and specifically to a named clause. Where a
+# theme is genuinely about implementation hygiene rather than a named
+# compliance requirement (see config_hygiene below), it is deliberately
+# left mapped to fewer frameworks rather than force-fitting a clause
+# reference that wouldn't hold up to an auditor's scrutiny.
+
+themes:
+  network_exposure:
+    title: "Network segmentation and internet-facing exposure"
+    description: >
+      Security groups, NACLs, and EKS endpoint settings that control what
+      is reachable from 0.0.0.0/0, plus public-IP assignment.
+    checks:
+      - CKV_AWS_24   # SG ingress 0.0.0.0/0:22
+      - CKV_AWS_25   # SG ingress 0.0.0.0/0:3389
+      - CKV_AWS_38   # EKS public endpoint not open to 0.0.0.0/0
+      - CKV_AWS_39   # EKS public endpoint disabled
+      - CKV_AWS_88   # EC2 instance should not have public IP
+      - CKV_AWS_100  # EKS node group no implicit SSH from 0.0.0.0/0
+      - CKV_AWS_130  # VPC subnets do not assign public IP by default
+      - CKV_AWS_229  # NACL ingress 0.0.0.0/0:21
+      - CKV_AWS_230  # NACL ingress 0.0.0.0/0:20
+      - CKV_AWS_231  # NACL ingress 0.0.0.0/0:3389
+      - CKV_AWS_232  # NACL ingress 0.0.0.0/0:22
+      - CKV_AWS_260  # SG ingress 0.0.0.0/0:80
+      - CKV_AWS_277  # SG ingress 0.0.0.0/0:-1 (all ports)
+      - CKV_AWS_352  # NACL ingress all ports
+      - CKV_AWS_382  # SG egress 0.0.0.0/0:-1 (all ports)
+    frameworks:
+      iso27001:
+        - clause: "A.8.20"
+          title: "Networks security"
+        - clause: "A.8.22"
+          title: "Segregation of networks"
+      pci_dss:
+        - clause: "Requirement 1"
+          title: "Install and Maintain Network Security Controls"
+      nis2:
+        - clause: "Article 21(2)(i)"
+          title: "Access control policies and asset management"
+      soc2:
+        - clause: "CC6.6"
+          title: "The entity implements logical access security measures to protect against threats from sources outside its system boundaries"
+
+  encryption_at_rest:
+    title: "Encryption at rest and key management"
+    description: >
+      KMS key configuration (rotation, policy, enablement) and use of KMS
+      to encrypt logs/secrets.
+    checks:
+      - CKV_AWS_7    # CMK rotation enabled
+      - CKV_AWS_33   # KMS key policy no wildcard principal
+      - CKV_AWS_58   # EKS secrets encryption enabled
+      - CKV_AWS_158  # CloudWatch Log Group encrypted by KMS
+      - CKV_AWS_227  # KMS key is enabled
+      - CKV2_AWS_64  # KMS key policy is defined
+    frameworks:
+      iso27001:
+        - clause: "A.8.24"
+          title: "Use of cryptography"
+      pci_dss:
+        - clause: "Requirement 3"
+          title: "Protect Stored Account Data"
+      nis2:
+        - clause: "Article 21(2)(h)"
+          title: "Policies and procedures regarding the use of cryptography and, where appropriate, encryption"
+      soc2:
+        - clause: "CC6.1"
+          title: "The entity implements logical access security software, infrastructure, and architectures to protect information assets"
+
+  iam_least_privilege:
+    title: "IAM least privilege and privilege escalation prevention"
+    description: >
+      Wildcard actions/resources/principals in IAM policies, unconstrained
+      write/exfiltration/privilege-escalation permissions, and use of the
+      AWS-managed AdministratorAccess/IAMFullAccess policies.
+    checks:
+      - CKV_AWS_1    # IAM policy no full "*:*" admin privileges
+      - CKV_AWS_49   # IAM policy no "*" as statement actions
+      - CKV_AWS_60   # IAM role trust restricted to specific services/principals
+      - CKV_AWS_61   # IAM policy no assume-role across all services
+      - CKV_AWS_62   # IAM policy no full "*:*" admin privileges (dup rule id family)
+      - CKV_AWS_63   # IAM policy no "*" as statement actions (dup rule id family)
+      - CKV_AWS_107  # IAM policy no credentials exposure
+      - CKV_AWS_108  # IAM policy no data exfiltration
+      - CKV_AWS_109  # IAM policy no unconstrained permissions management
+      - CKV_AWS_110  # IAM policy no privilege escalation
+      - CKV_AWS_111  # IAM policy no unconstrained write access
+      - CKV_AWS_274  # Disallow use of AWS-managed AdministratorAccess policy
+      - CKV_AWS_283  # IAM policy no ALL/any-principal access to the resource
+      - CKV_AWS_286  # IAM policy no privilege escalation (2024 rule id family)
+      - CKV_AWS_287  # IAM policy no credentials exposure (2024 rule id family)
+      - CKV_AWS_288  # IAM policy no data exfiltration (2024 rule id family)
+      - CKV_AWS_289  # IAM policy no unconstrained permissions management (2024 rule id family)
+      - CKV_AWS_290  # IAM policy no unconstrained write access (2024 rule id family)
+      - CKV_AWS_355  # IAM policy no "*" as statement resource for restrictable actions
+      - CKV_AWS_356  # IAM policy no "*" as statement resource for restrictable actions (dup)
+      - CKV2_AWS_40  # IAM policy does not allow full IAM privileges
+      - CKV2_AWS_56  # AWS-managed IAMFullAccess policy is not used
+    frameworks:
+      iso27001:
+        - clause: "A.5.15"
+          title: "Access control"
+        - clause: "A.8.2"
+          title: "Privileged access rights"
+        - clause: "A.8.3"
+          title: "Information access restriction"
+      pci_dss:
+        - clause: "Requirement 7"
+          title: "Restrict Access to System Components and Cardholder Data by Business Need to Know"
+      nis2:
+        - clause: "Article 21(2)(i)"
+          title: "Access control policies and asset management"
+      soc2:
+        - clause: "CC6.1"
+          title: "The entity implements logical access security software, infrastructure, and architectures to protect information assets"
+        - clause: "CC6.3"
+          title: "The entity authorizes, modifies, or removes access based on roles, responsibilities, or the system design"
+
+  authentication_and_secrets:
+    title: "Authentication, federation, and secret handling"
+    description: >
+      OIDC federation claim safety, and absence of hard-coded credentials
+      in provider config or instance user data.
+    checks:
+      - CKV_AWS_41   # No hard-coded AWS access/secret key in provider
+      - CKV_AWS_46   # No hard-coded secrets in EC2 user data
+      - CKV_AWS_358  # GitHub Actions OIDC authorization policies: safe claims/claim order
+      - CKV_AWS_393  # GitHub Actions OIDC authorization policies: safe claims/claim order (IAM role variant)
+    frameworks:
+      iso27001:
+        - clause: "A.8.5"
+          title: "Secure authentication"
+      pci_dss:
+        - clause: "Requirement 8"
+          title: "Identify Users and Authenticate Access to System Components"
+      nis2:
+        - clause: "Article 21(2)(j)"
+          title: "Use of multi-factor authentication or continuous authentication solutions, secured voice/video/text communications"
+      soc2:
+        - clause: "CC6.1"
+          title: "The entity implements logical access security software, infrastructure, and architectures to protect information assets"
+
+  logging_and_monitoring:
+    title: "Audit logging, retention, and monitoring"
+    description: >
+      VPC Flow Logs, EKS control plane logging, and CloudWatch Log Group
+      retention - the evidence trail a post-incident investigation depends on.
+    checks:
+      - CKV_AWS_37   # EKS control plane logging enabled for all log types
+      - CKV_AWS_66   # CloudWatch Log Group specifies retention days
+      - CKV_AWS_338  # CloudWatch log groups retain logs >= 1 year
+      - CKV2_AWS_11  # VPC flow logging enabled in all VPCs
+    frameworks:
+      iso27001:
+        - clause: "A.8.15"
+          title: "Logging"
+        - clause: "A.8.16"
+          title: "Monitoring activities"
+      pci_dss:
+        - clause: "Requirement 10"
+          title: "Log and Monitor All Access to System Components and Cardholder Data"
+      nis2:
+        - clause: "Article 21(2)(b)"
+          title: "Incident handling"
+      soc2:
+        - clause: "CC7.1"
+          title: "The entity uses detection and monitoring procedures to identify anomalies"
+        - clause: "CC7.2"
+          title: "The entity monitors system components for anomalies indicative of malicious acts, natural disasters, or errors"
+
+  config_hygiene:
+    title: "Resource configuration hygiene"
+    description: >
+      General infrastructure hygiene checks (unattached resources,
+      unlabeled security groups, default routes, supported EKS version,
+      IMDS hop limit) that are good practice but do not map to a single
+      named clause in the frameworks tracked here as specifically as the
+      themes above - listed for completeness rather than force-fit to a
+      framework reference that wouldn't survive an auditor's scrutiny.
+    checks:
+      - CKV_AWS_23   # Every security group and rule has a description
+      - CKV_AWS_79   # IMDSv1 not enabled (IMDSv2 required)
+      - CKV_AWS_339  # EKS cluster runs a supported Kubernetes version
+      - CKV_AWS_341  # Launch template metadata hop limit not > 1
+      - CKV2_AWS_1   # All NACLs are attached to subnets
+      - CKV2_AWS_5   # Security groups are attached to another resource
+      - CKV2_AWS_12  # Default security group of every VPC restricts all traffic
+      - CKV2_AWS_19  # All EIPs allocated to a VPC are attached to an instance
+      - CKV2_AWS_35  # NAT Gateways used for the default route
+      - CKV2_AWS_44  # Route tables with VPC peering are not overly permissive
+    frameworks:
+      iso27001:
+        - clause: "A.8.9"
+          title: "Configuration management"
