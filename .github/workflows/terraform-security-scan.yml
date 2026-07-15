@@ -15,11 +15,14 @@ on:
     branches: [main]
     paths:
       - "terraform/**"
+      - ".github/workflows/terraform-security-scan.yml"
+  workflow_dispatch: {}
 
 permissions:
   contents: read
   pull-requests: write # to post scan results as a PR comment
   id-token: write        # OIDC for the plan job's AWS credentials
+  security-events: write  # to upload SARIF findings to the Security tab
 
 jobs:
   fmt-and-validate:

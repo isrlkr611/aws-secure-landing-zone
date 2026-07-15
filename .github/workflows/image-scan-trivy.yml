@@ -37,7 +37,7 @@ jobs:
         run: docker build -t app:${{ github.sha }} .
 
       - name: Scan image with Trivy (fail on CRITICAL/HIGH)
-        uses: aquasecurity/trivy-action@0.24.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: app:${{ github.sha }}
           format: table
@@ -47,7 +47,7 @@ jobs:
 
       - name: Scan image again for SARIF report (non-blocking, for Security tab)
         if: always()
-        uses: aquasecurity/trivy-action@0.24.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: app:${{ github.sha }}
           format: sarif
@@ -62,7 +62,7 @@ jobs:
           sarif_file: trivy-results.sarif
 
       - name: Scan Kubernetes manifests for misconfigurations
-        uses: aquasecurity/trivy-action@0.24.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: config
           scan-ref: kubernetes/

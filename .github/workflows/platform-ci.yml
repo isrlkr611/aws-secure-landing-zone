@@ -15,6 +15,8 @@ on:
     branches: [main]
     paths:
       - "platform/**"
+      - ".github/workflows/platform-ci.yml"
+  workflow_dispatch: {}
 
 permissions:
   contents: read
@@ -64,7 +66,7 @@ jobs:
         run: docker build -t attack-surface-monitor-api:${{ github.sha }} .
 
       - name: Scan image with Trivy (fail on fixable CRITICAL/HIGH)
-        uses: aquasecurity/trivy-action@0.24.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: attack-surface-monitor-api:${{ github.sha }}
           format: table
@@ -74,7 +76,7 @@ jobs:
 
       - name: Scan again for SARIF report (non-blocking, for Security tab)
         if: always()
-        uses: aquasecurity/trivy-action@0.24.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: attack-surface-monitor-api:${{ github.sha }}
           format: sarif
