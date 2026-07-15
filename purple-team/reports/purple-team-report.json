@@ -1,0 +1,93 @@
+{
+  "results": [
+    {
+      "technique_id": "T1007",
+      "display_name": "System Service Discovery",
+      "tactic": "discovery",
+      "command": "systemctl list-units --type=service --no-pager 2>/dev/null || service --status-all 2>/dev/null",
+      "executed": true,
+      "exit_code": 0,
+      "detected": false,
+      "detector_name": "null",
+      "evidence": "No detection stack configured - see purple-team/README.md 'Detectors'.",
+      "skip_reason": null
+    },
+    {
+      "technique_id": "T1016",
+      "display_name": "System Network Configuration Discovery",
+      "tactic": "discovery",
+      "command": "ip a 2>/dev/null || ifconfig -a 2>/dev/null; cat /etc/resolv.conf 2>/dev/null",
+      "executed": true,
+      "exit_code": 0,
+      "detected": false,
+      "detector_name": "null",
+      "evidence": "No detection stack configured - see purple-team/README.md 'Detectors'.",
+      "skip_reason": null
+    },
+    {
+      "technique_id": "T1018",
+      "display_name": "Remote System Discovery",
+      "tactic": "discovery",
+      "command": "ip neigh 2>/dev/null || arp -a 2>/dev/null",
+      "executed": true,
+      "exit_code": 0,
+      "detected": false,
+      "detector_name": "null",
+      "evidence": "No detection stack configured - see purple-team/README.md 'Detectors'.",
+      "skip_reason": null
+    },
+    {
+      "technique_id": "T1033",
+      "display_name": "System Owner/User Discovery",
+      "tactic": "discovery",
+      "command": "whoami; id",
+      "executed": true,
+      "exit_code": 0,
+      "detected": false,
+      "detector_name": "null",
+      "evidence": "No detection stack configured - see purple-team/README.md 'Detectors'.",
+      "skip_reason": null
+    },
+    {
+      "technique_id": "T1057",
+      "display_name": "Process Discovery",
+      "tactic": "discovery",
+      "command": "ps aux",
+      "executed": true,
+      "exit_code": 0,
+      "detected": false,
+      "detector_name": "null",
+      "evidence": "No detection stack configured - see purple-team/README.md 'Detectors'.",
+      "skip_reason": null
+    },
+    {
+      "technique_id": "T1082",
+      "display_name": "System Information Discovery",
+      "tactic": "discovery",
+      "command": "uname -a; cat /etc/os-release 2>/dev/null | head -5",
+      "executed": true,
+      "exit_code": 0,
+      "detected": false,
+      "detector_name": "null",
+      "evidence": "No detection stack configured - see purple-team/README.md 'Detectors'.",
+      "skip_reason": null
+    },
+    {
+      "technique_id": "T1083",
+      "display_name": "File and Directory Discovery",
+      "tactic": "discovery",
+      "command": "ls -la /tmp /home 2>/dev/null | head -40",
+      "executed": true,
+      "exit_code": 0,
+      "detected": false,
+      "detector_name": "null",
+      "evidence": "No detection stack configured - see purple-team/README.md 'Detectors'.",
+      "skip_reason": null
+    }
+  ],
+  "summary": {
+    "total": 7,
+    "executed": 7,
+    "detected": 0
+  }
+}

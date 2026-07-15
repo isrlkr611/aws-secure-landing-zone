@@ -1,0 +1,18 @@
+attack_technique: T1007
+display_name: System Service Discovery
+tactic: discovery
+platforms: [linux]
+safety: read_only
+description: >
+  Adversaries may try to get information about registered services,
+  which can reveal security tooling (EDR agents, log shippers) running
+  on a host as named services.
+test:
+  command: "systemctl list-units --type=service --no-pager 2>/dev/null || service --status-all 2>/dev/null"
+  cleanup: null
+expected_detection:
+  description: >
+    Enumerating services by itself is low-signal; a rule that flags this
+    command specifically grepping for security-tool service names
+    (wazuh-agent, auditd, falco, osquery) is a more precise detection
+    target than the bare enumeration used here.

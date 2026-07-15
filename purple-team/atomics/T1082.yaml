@@ -1,0 +1,19 @@
+attack_technique: T1082
+display_name: System Information Discovery
+tactic: discovery
+platforms: [linux, macos]
+safety: read_only
+description: >
+  Adversaries may attempt to get detailed information about the operating
+  system and hardware, including version, patches, hotfixes, service
+  packs, and architecture, typically as an early reconnaissance step.
+test:
+  command: "uname -a; cat /etc/os-release 2>/dev/null | head -5"
+  cleanup: null
+expected_detection:
+  description: >
+    A host-based detection stack (auditd, osquery, EDR agent) watching
+    process execution should log an exec event for `uname`. Wazuh's
+    default ruleset does not alert on this alone (too noisy/benign to
+    be a signal by itself) - it is more useful as a correlation input
+    alongside other techniques than as a standalone detection target.

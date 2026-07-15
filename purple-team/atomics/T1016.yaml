@@ -1,0 +1,19 @@
+attack_technique: T1016
+display_name: System Network Configuration Discovery
+tactic: discovery
+platforms: [linux, macos]
+safety: read_only
+description: >
+  Adversaries may look for details about the network configuration and
+  settings of systems they access, including IP/MAC addresses, DNS, and
+  routing tables.
+test:
+  command: "ip a 2>/dev/null || ifconfig -a 2>/dev/null; cat /etc/resolv.conf 2>/dev/null"
+  cleanup: null
+expected_detection:
+  description: >
+    Command-line auditing should log `ip`/`ifconfig` execution. In a
+    Kubernetes context (this landing zone's EKS nodes), this is also the
+    reconnaissance step Calico's IMDS-blocking GlobalNetworkPolicy (see
+    kubernetes/network-policies/calico-deny-imds.yaml) exists to make
+    less useful to an attacker even if this technique succeeds.

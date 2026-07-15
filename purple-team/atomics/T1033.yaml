@@ -1,0 +1,18 @@
+attack_technique: T1033
+display_name: System Owner/User Discovery
+tactic: discovery
+platforms: [linux, macos]
+safety: read_only
+description: >
+  Adversaries may attempt to identify the primary user, currently logged
+  in user, set of users who commonly use a system, or whether a user is
+  actively using the system.
+test:
+  command: "whoami; id"
+  cleanup: null
+expected_detection:
+  description: >
+    Shell history / auditd exec logging should capture `whoami`/`id`
+    invocations. On its own, low-signal (legitimate admin activity looks
+    identical); becomes meaningful when correlated with a preceding
+    initial-access or privilege-escalation alert for the same session.

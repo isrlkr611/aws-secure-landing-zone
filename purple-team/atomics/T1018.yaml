@@ -1,0 +1,21 @@
+attack_technique: T1018
+display_name: Remote System Discovery
+tactic: discovery
+platforms: [linux, macos]
+safety: read_only
+description: >
+  Adversaries may attempt to get a listing of other systems by IP address,
+  hostname, or other logical identifier on a network - here approximated
+  by reading the local ARP/neighbor cache rather than actively probing
+  the network (which would cross into T1046 Network Service Discovery
+  territory and is deliberately excluded from this read-only set).
+test:
+  command: "ip neigh 2>/dev/null || arp -a 2>/dev/null"
+  cleanup: null
+expected_detection:
+  description: >
+    Reading the local neighbor table generates no network traffic, so a
+    network-based IDS (Suricata) won't see it - this is a case where only
+    host-based logging (auditd/EDR) can provide detection coverage,
+    illustrating why this orchestrator's coverage report tracks per-tool
+    results rather than a single pass/fail.

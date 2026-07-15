@@ -1,0 +1,63 @@
+name: Purple Team CI
+
+# Lint + test for purple-team/ (Brique 3: BAS orchestrator). No Docker image
+# here (pure Python scripts, no service to containerize), so this is
+# lighter than platform-ci.yml - but the safety-gate tests
+# (tests/test_safety.py, tests/test_atomics_library.py) are exactly as
+# load-bearing as platform's legal-gate tests, and must never be skipped.
+
+on:
+  pull_request:
+    paths:
+      - "purple-team/**"
+      - ".github/workflows/purple-team-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "purple-team/**"
+      - ".github/workflows/purple-team-ci.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-test:
+    name: ruff + pytest
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: purple-team
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: purple-team/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install ruff
+
+      - name: Ruff lint
+        run: ruff check .
+
+      - name: Pytest (includes the safety-gate and read-only-technique regression suites)
+        run: pytest tests/ -v
+
+      - name: Regenerate coverage report against this runner (localhost only)
+        run: |
+          python3 orchestrator.py --target localhost --detector null \
+            --output-md /tmp/purple-team-report.md \
+            --output-json /tmp/purple-team-report.json
+          cat /tmp/purple-team-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: purple-team-report
+          path: /tmp/purple-team-report.*
+          retention-days: 90

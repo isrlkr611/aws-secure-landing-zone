@@ -1,0 +1,17 @@
+# Explicit allowlist of targets the orchestrator may run technique commands
+# against - see safety.py "WHY THIS FILE EXISTS AND MUST NOT BE BYPASSED".
+#
+# localhost is included because it's the one target this codebase can run
+# against without any external attestation (see safety.py). To point this
+# at a real lab host (a GNS3/EKS/EC2 box you actually control), add an
+# entry here and set confirmed_own_lab: true yourself - it defaults to
+# false, so copy-pasting a new entry without that line stays blocked.
+
+hosts:
+  - name: localhost
+    address: 127.0.0.1
+    confirmed_own_lab: true
+
+  # - name: eks-lab-node
+  #   address: 10.0.32.15
+  #   confirmed_own_lab: true   # only after you've confirmed this is YOUR lab EKS node

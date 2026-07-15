@@ -1,0 +1,19 @@
+attack_technique: T1057
+display_name: Process Discovery
+tactic: discovery
+platforms: [linux, macos]
+safety: read_only
+description: >
+  Adversaries may attempt to get information about running processes on a
+  system, which can help determine running security/monitoring software
+  or identify other software of interest.
+test:
+  command: "ps aux"
+  cleanup: null
+expected_detection:
+  description: >
+    A detection stack that flags `ps` being used to enumerate security
+    tooling process names (e.g. grepping for "wazuh", "auditd", "falco")
+    would catch a targeted variant of this technique; a bare `ps aux`
+    with no follow-on grep is generally too common in legitimate
+    operations to be a reliable standalone signal.

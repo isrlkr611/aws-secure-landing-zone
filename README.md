@@ -24,6 +24,8 @@ A full technical deep dive — module-by-module design rationale, threat model, 
 
 [`compliance/`](compliance/) turns the Terraform/Checkov results the CI pipeline already produces into a per-framework compliance score (ISO 27001, PCI-DSS, NIS2, SOC 2) - real numbers from a real scan (currently **100% across all four frameworks, 194/194 mapped checks passing**, 7 documented exceptions excluded from the score and listed individually rather than folded in), not a self-assessment questionnaire. Regenerated on every CI run: [compliance/reports/compliance-report.md](compliance/reports/compliance-report.md). See [compliance/README.md](compliance/README.md) for methodology and, importantly, what this is *not* (not an audit, not exhaustive per framework, not legal advice).
 
+[`purple-team/`](purple-team/) is a small Breach & Attack Simulation orchestrator: runs a curated, explicitly read-only-only set of MITRE ATT&CK discovery techniques against an authorized lab target (default: `localhost` only - anything else requires manually confirming ownership in `lab-config.yaml`, the same default-deny pattern as the platform's DNS TXT gate), and reports per-technique detection coverage via a pluggable `Detector` (Wazuh, GuardDuty, or a `NullDetector` default). **Actually executed** against this development machine - [purple-team/reports/purple-team-report.md](purple-team/reports/purple-team-report.md) shows 7/7 real technique runs, 0% detection coverage, honestly reported as "no detection stack deployed" rather than "detection stack failed" (none is deployed anywhere in this repo). See [purple-team/README.md](purple-team/README.md) for the safety model and what's real vs. unit-tested-only.
+
 ## Repo structure
 
 ```
@@ -56,6 +58,11 @@ A full technical deep dive — module-by-module design rationale, threat model, 
 │   ├── mapping_norms.yaml                    # 61 real check_ids -> control themes -> framework clauses
 │   ├── generate_report.py                     # aggregates a live checkov scan against the mapping
 │   └── reports/                                 # generated compliance-report.{md,json}, committed
+├── purple-team/                            # BAS orchestrator: MITRE ATT&CK techniques -> detection coverage (see purple-team/README.md)
+│   ├── safety.py                             # lab-target gate: localhost only by default, explicit opt-in for anything else
+│   ├── atomics/                               # 7 curated, read-only-only MITRE discovery techniques
+│   ├── detectors/                             # NullDetector (live-tested), Wazuh/GuardDuty (real code, unit-tested)
+│   └── reports/                                 # generated purple-team-report.{md,json}, committed
 └── docs/
     ├── architecture.md                     # Mermaid diagram + security choices + scan results
     ├── deep-dive/                            # ultra-detailed EN/FR technical reference (PDF + Markdown)
@@ -100,8 +107,9 @@ kubectl apply -f kubernetes/external-secrets/
 - [x] Kubernetes manifests syntactically validated
 - [x] `tfsec`/`checkov` scans actually run (before/after), results committed under `docs/scan-results/`
 - [x] GitHub Actions CI verified green on this repo (`Terraform Security Scan`, `Platform CI`), including the SARIF-to-Security-tab upload path - not just written and assumed to work
-- [x] `platform/`'s 45 tests and `compliance/`'s 10 tests pass; both container-image scans (landing zone template + platform API) run through Trivy with findings either fixed or documented as an accepted, tracked exception
-- [ ] Not deployed to a real AWS account (no billable resource created by this repo as-is)
+- [x] `platform/`'s 45 tests, `compliance/`'s 10 tests, and `purple-team/`'s 27 tests all pass; both container-image scans (landing zone template + platform API) run through Trivy with findings either fixed or documented as an accepted, tracked exception
+- [x] All three product modules (`platform/`, `compliance/`, `purple-team/`) demonstrated with real, committed output - not mockups: a real Docker build + Trivy scan, a real Checkov scan cross-referenced against real framework clauses, and 7 real MITRE technique executions against this development machine
+- [ ] Not deployed to a real AWS account (no billable resource created by this repo as-is) - a full deployment was scoped and priced (~200-300 USD/month for EKS + NAT Gateways + nodes + KMS if left running) and deliberately deferred rather than run up a recurring bill for a portfolio piece with no live workload behind it
 - [ ] `terraform-plan.yml` (the OIDC-federated plan-on-PR workflow) needs `AWS_DEPLOY_ROLE_ARN` configured as a repo secret post-deployment to actually run - untestable without a deployed AWS account
 
 ## License

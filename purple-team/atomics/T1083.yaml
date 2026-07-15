@@ -1,0 +1,18 @@
+attack_technique: T1083
+display_name: File and Directory Discovery
+tactic: discovery
+platforms: [linux, macos]
+safety: read_only
+description: >
+  Adversaries may enumerate files and directories to find information of
+  interest, understand the layout of a filesystem, or locate specific
+  files before further action (e.g. credential/config file hunting).
+test:
+  command: "ls -la /tmp /home 2>/dev/null | head -40"
+  cleanup: null
+expected_detection:
+  description: >
+    Rapid, broad filesystem enumeration (many `ls`/`find` calls across
+    sensitive paths in a short window) is a stronger detection signal
+    than the single, narrow listing used here - a production ruleset
+    should threshold on frequency/breadth, not flag every `ls` call.
